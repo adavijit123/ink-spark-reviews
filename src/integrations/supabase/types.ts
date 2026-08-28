@@ -44,8 +44,39 @@ export type Database = {
         }
         Relationships: []
       }
+      review_keywords: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          keyword: string
+          sort_order: number
+          updated_at: string
+          weight_percent: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keyword: string
+          sort_order?: number
+          updated_at?: string
+          weight_percent?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keyword?: string
+          sort_order?: number
+          updated_at?: string
+          weight_percent?: number
+        }
+        Relationships: []
+      }
       review_presets: {
         Row: {
+          bangla_percent: number | null
           category_id: string | null
           content: string
           created_at: string
@@ -56,6 +87,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          bangla_percent?: number | null
           category_id?: string | null
           content: string
           created_at?: string
@@ -66,6 +98,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          bangla_percent?: number | null
           category_id?: string | null
           content?: string
           created_at?: string
@@ -88,7 +121,9 @@ export type Database = {
       studio_settings: {
         Row: {
           ai_instructions: string
+          artist_mention_percent: number
           artists: string
+          bangla_percent: number
           created_at: string
           experience_keywords: string
           google_review_url: string
@@ -101,7 +136,9 @@ export type Database = {
         }
         Insert: {
           ai_instructions?: string
+          artist_mention_percent?: number
           artists?: string
+          bangla_percent?: number
           created_at?: string
           experience_keywords?: string
           google_review_url?: string
@@ -114,7 +151,9 @@ export type Database = {
         }
         Update: {
           ai_instructions?: string
+          artist_mention_percent?: number
           artists?: string
+          bangla_percent?: number
           created_at?: string
           experience_keywords?: string
           google_review_url?: string
