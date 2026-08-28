@@ -198,7 +198,8 @@ export const generateReview = createServerFn({ method: "POST" })
       },
       body: JSON.stringify({
         model: "google/gemini-3.7-flash",
-        temperature: 1.3,
+        temperature: 2.0,
+        top_p: 0.99,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
