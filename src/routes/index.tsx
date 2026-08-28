@@ -126,16 +126,16 @@ function ReviewPage() {
 
         {(data?.categories.length ?? 0) > 0 && (
           <div className="mt-5">
-            <p className="text-eyebrow">What stood out?</p>
+            <p className="text-eyebrow">What stood out? (pick any)</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <ChipButton active={categoryId === null} onClick={() => setCategoryId(null)}>
+              <ChipButton active={categoryIds.length === 0} onClick={() => setCategoryIds([])}>
                 Anything
               </ChipButton>
               {data?.categories.map((c) => (
                 <ChipButton
                   key={c.id}
-                  active={categoryId === c.id}
-                  onClick={() => setCategoryId(c.id)}
+                  active={categoryIds.includes(c.id)}
+                  onClick={() => toggleCategory(c.id)}
                 >
                   {c.name}
                 </ChipButton>
@@ -143,6 +143,24 @@ function ReviewPage() {
             </div>
           </div>
         )}
+
+        {artistOptions.length > 0 && (
+          <div className="mt-5">
+            <p className="text-eyebrow">Who was your artist?</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {artistOptions.map((a) => (
+                <ChipButton
+                  key={a}
+                  active={artist === a}
+                  onClick={() => setArtist((prev) => (prev === a ? null : a))}
+                >
+                  {a}
+                </ChipButton>
+              ))}
+            </div>
+          </div>
+        )}
+
 
         {!review ? (
           <Button
