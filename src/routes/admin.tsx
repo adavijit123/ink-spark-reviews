@@ -163,6 +163,8 @@ type Settings = {
   artists: string;
   experience_keywords: string;
   ai_instructions: string;
+  artist_mention_percent: number;
+  bangla_percent: number;
 };
 
 type Category = {
@@ -180,6 +182,15 @@ type Preset = {
   tone: string;
   sort_order: number;
   is_active: boolean;
+  bangla_percent: number | null;
+};
+
+type Keyword = {
+  id: string;
+  keyword: string;
+  weight_percent: number;
+  is_active: boolean;
+  sort_order: number;
 };
 
 function AdminDashboard() {
@@ -218,6 +229,18 @@ function AdminDashboard() {
     },
   });
 
+  const keywordsQuery = useQuery({
+    queryKey: ["admin", "keywords"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("review_keywords")
+        .select("*")
+        .order("sort_order");
+      if (error) throw error;
+      return (data ?? []) as Keyword[];
+    },
+  });
+
   const invalidate = (key: string) => qc.invalidateQueries({ queryKey: ["admin", key] });
 
   return (
@@ -233,10 +256,11 @@ function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="presets" className="mt-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="presets">Presets</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="studio">Studio &amp; AI</TabsTrigger>
+          <TabsTrigger value="categories">Angles</TabsTrigger>
+          <TabsTrigger value="keywords">Keywords</TabsTrigger>
+          <TabsTrigger value="studio">Studio</TabsTrigger>
         </TabsList>
 
         <TabsContent value="presets" className="mt-4">
@@ -251,6 +275,13 @@ function AdminDashboard() {
           <CategoriesPanel
             categories={categoriesQuery.data ?? []}
             onChanged={() => invalidate("categories")}
+          />
+        </TabsContent>
+
+        <TabsContent value="keywords" className="mt-4">
+          <KeywordsPanel
+            keywords={keywordsQuery.data ?? []}
+            onChanged={() => invalidate("keywords")}
           />
         </TabsContent>
 
@@ -281,20 +312,24 @@ function PresetsPanel({
   const [content, setContent] = useState("");
   const [tone, setTone] = useState("friendly");
   const [categoryId, setCategoryId] = useState<string>("");
+  const [bangla, setBangla] = useState<string>("");
 
   async function add() {
     if (!content.trim()) return;
+    const parsed = bangla.trim() === "" ? null : Math.min(100, Math.max(0, Number(bangla)));
     const { error } = await supabase.from("review_presets").insert({
       content: content.trim(),
       tone: tone.trim() || "friendly",
       category_id: categoryId || null,
       sort_order: presets.length + 1,
+      bangla_percent: parsed !== null && Number.isFinite(parsed) ? parsed : null,
     });
     if (error) {
       toast.error(error.message);
       return;
     }
     setContent("");
+    setBangla("");
     onChanged();
     toast.success("Preset added");
   }
@@ -303,6 +338,19 @@ function PresetsPanel({
     const { error } = await supabase
       .from("review_presets")
       .update({ is_active: !preset.is_active })
+      .eq("id", preset.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    onChanged();
+  }
+
+  async function setBanglaPercent(preset: Preset, value: string) {
+    const parsed = value.trim() === "" ? null : Math.min(100, Math.max(0, Number(value)));
+    const { error } = await supabase
+      .from("review_presets")
+      .update({ bangla_percent: parsed !== null && Number.isFinite(parsed) ? parsed : null })
       .eq("id", preset.id);
     if (error) {
       toast.error(error.message);
@@ -347,6 +395,16 @@ function PresetsPanel({
             ))}
           </select>
         </div>
+        <div className="mt-3">
+          <Label className="text-eyebrow">Bangla share for this preset (%) — blank = studio default</Label>
+          <Input
+            value={bangla}
+            inputMode="numeric"
+            placeholder="e.g. 25"
+            onChange={(e) => setBangla(e.target.value)}
+            className="mt-1.5"
+          />
+        </div>
         <Button className="mt-3 w-full uppercase" onClick={add}>
           <Plus className="size-4" /> Add preset
         </Button>
@@ -355,6 +413,18 @@ function PresetsPanel({
       {presets.map((p) => (
         <div key={p.id} className="panel p-4">
           <p className="text-sm leading-relaxed">{p.content}</p>
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+              Bangla %
+            </span>
+            <Input
+              defaultValue={p.bangla_percent ?? ""}
+              inputMode="numeric"
+              placeholder="default"
+              onBlur={(e) => setBanglaPercent(p, e.target.value)}
+              className="h-8 w-24"
+            />
+          </div>
           <div className="mt-3 flex items-center justify-between gap-2">
             <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
               {categories.find((c) => c.id === p.category_id)?.name ?? "No category"} · {p.tone}
@@ -462,6 +532,114 @@ function CategoriesPanel({
   );
 }
 
+function KeywordsPanel({
+  keywords,
+  onChanged,
+}: {
+  keywords: Keyword[];
+  onChanged: () => void;
+}) {
+  const [keyword, setKeyword] = useState("");
+  const [weight, setWeight] = useState("40");
+
+  async function add() {
+    if (!keyword.trim()) return;
+    const parsed = Math.min(100, Math.max(0, Number(weight) || 0));
+    const { error } = await supabase.from("review_keywords").insert({
+      keyword: keyword.trim(),
+      weight_percent: parsed,
+      sort_order: keywords.length + 1,
+    });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    setKeyword("");
+    onChanged();
+    toast.success("Keyword added");
+  }
+
+  async function update(id: string, patch: Partial<Keyword>) {
+    const { error } = await supabase.from("review_keywords").update(patch).eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    onChanged();
+  }
+
+  async function remove(id: string) {
+    const { error } = await supabase.from("review_keywords").delete().eq("id", id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    onChanged();
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="panel p-4">
+        <p className="text-eyebrow">New keyword</p>
+        <Input
+          value={keyword}
+          onChange={(e) => setKeyword(e.target.value)}
+          placeholder="e.g. Best tattoo studio in dhaka"
+          className="mt-2"
+        />
+        <div className="mt-2">
+          <Label className="text-eyebrow">Appears in % of reviews</Label>
+          <Input
+            value={weight}
+            inputMode="numeric"
+            onChange={(e) => setWeight(e.target.value)}
+            className="mt-1.5"
+          />
+        </div>
+        <Button className="mt-3 w-full uppercase" onClick={add}>
+          <Plus className="size-4" /> Add keyword
+        </Button>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Max 2 keywords per review, and a regenerated review never repeats the same combination.
+        </p>
+      </div>
+
+      {keywords.map((k) => (
+        <div key={k.id} className="panel p-4">
+          <p className="text-sm font-semibold">{k.keyword}</p>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Input
+                defaultValue={k.weight_percent}
+                inputMode="numeric"
+                onBlur={(e) =>
+                  update(k.id, {
+                    weight_percent: Math.min(100, Math.max(0, Number(e.target.value) || 0)),
+                  })
+                }
+                className="h-8 w-20"
+              />
+              <span className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                % of reviews
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <Switch
+                checked={k.is_active}
+                onCheckedChange={(v) => update(k.id, { is_active: v })}
+              />
+              <button onClick={() => remove(k.id)} aria-label="Delete keyword">
+                <Trash2 className="size-4 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
+      {keywords.length === 0 && <p className="text-sm text-muted-foreground">No keywords yet.</p>}
+    </div>
+  );
+}
+
 function StudioPanel({
   settings,
   onChanged,
@@ -483,6 +661,11 @@ function StudioPanel({
 
   const set = (key: keyof Omit<Settings, "id">) => (value: string) =>
     setForm((f) => (f ? { ...f, [key]: value } : f));
+
+  const setNumber = (key: "artist_mention_percent" | "bangla_percent") => (value: string) =>
+    setForm((f) =>
+      f ? { ...f, [key]: Math.min(100, Math.max(0, Number(value) || 0)) } : f,
+    );
 
   async function save() {
     setBusy(true);
@@ -518,6 +701,16 @@ function StudioPanel({
         value={form.experience_keywords}
         onChange={set("experience_keywords")}
         multiline
+      />
+      <Field
+        label="Artist name appears in % of reviews"
+        value={String(form.artist_mention_percent)}
+        onChange={setNumber("artist_mention_percent")}
+      />
+      <Field
+        label="Bangla reviews (% — default when a preset has none)"
+        value={String(form.bangla_percent)}
+        onChange={setNumber("bangla_percent")}
       />
       <Field
         label="AI generation instructions"
