@@ -109,6 +109,15 @@ export const generateReview = createServerFn({ method: "POST" })
     ];
     const opening = pickSome(openingOptions, 1)[0] ?? "start by describing the studio vibe";
 
+    const backstoryOptions = [
+      "this was your first tattoo and you were nervous",
+      "you came in with just a rough idea and trusted the artist",
+      "a friend recommended the studio to you",
+      "you got a cover-up and were worried about the result",
+      "you wanted a custom design for something meaningful",
+    ];
+    const backstory = pickSome(backstoryOptions, 1)[0] ?? "you are a happy customer";
+
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
     const systemPrompt = [
