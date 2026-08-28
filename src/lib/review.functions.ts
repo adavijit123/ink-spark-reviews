@@ -142,5 +142,5 @@ export const generateReview = createServerFn({ method: "POST" })
     const text = (payload.choices?.[0]?.message?.content ?? "").trim().replace(/^["']|["']$/g, "");
     if (!text) throw new Error("The AI returned an empty review. Try again.");
 
-    return { review: text, category: category?.name ?? null };
+    return { review: text, categories: selected.map((c) => c.name) };
   });
