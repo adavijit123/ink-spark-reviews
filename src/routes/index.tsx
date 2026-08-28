@@ -250,7 +250,7 @@ function ReviewPage() {
 
             <Button
               className="h-14 w-full text-base font-semibold uppercase tracking-wide"
-              onClick={copy}
+              onClick={() => copyText()}
               disabled={!review.trim()}
             >
               {copied ? <Check className="size-5" /> : <Copy className="size-5" />}
@@ -260,13 +260,13 @@ function ReviewPage() {
             <Button
               variant="secondary"
               className="h-14 w-full text-base font-semibold uppercase tracking-wide"
-              asChild
+              onClick={copyAndOpen}
+              disabled={!review.trim()}
             >
-              <a href={reviewUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="size-5" />
-                Open Google Reviews
-              </a>
+              <ExternalLink className="size-5" />
+              Copy &amp; open Google Reviews
             </Button>
+
 
             <p className="pt-1 text-center text-xs text-muted-foreground">
               Nothing is posted automatically — you paste and submit it yourself.
