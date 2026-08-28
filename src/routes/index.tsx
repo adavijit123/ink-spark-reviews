@@ -81,7 +81,6 @@ function ReviewPage() {
 
   async function run(regenerate: boolean) {
     setBusy(true);
-    setCopied(false);
     try {
       const result = await generate({
         data: {
