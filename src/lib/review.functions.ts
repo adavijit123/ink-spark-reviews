@@ -42,6 +42,7 @@ export const generateReview = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured yet.");
+    const lovableApiKey = apiKey;
 
     const supabase = publicClient();
 
