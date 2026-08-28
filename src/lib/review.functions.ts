@@ -58,12 +58,11 @@ export const generateReview = createServerFn({ method: "POST" })
     const categories = categoriesRes.data ?? [];
     const allPresets = presetsRes.data ?? [];
 
-    const category = data.categoryId
-      ? (categories.find((c) => c.id === data.categoryId) ?? null)
-      : null;
+    const selectedIds = data.categoryIds ?? [];
+    const selected = categories.filter((c) => selectedIds.includes(c.id));
 
-    const scoped = category
-      ? allPresets.filter((p) => p.category_id === category.id)
+    const scoped = selected.length
+      ? allPresets.filter((p) => p.category_id && selectedIds.includes(p.category_id))
       : allPresets;
     const presets = pickSome(scoped.length ? scoped : allPresets, 4);
     const keywords = pickSome(
