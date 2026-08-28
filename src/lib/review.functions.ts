@@ -201,9 +201,9 @@ export const generateReview = createServerFn({ method: "POST" })
           "X-Request-Nonce": `${Date.now()}-${Math.random().toString(36).slice(2)}`,
         },
         body: JSON.stringify({
-          model: "google/gemini-3.7-flash",
-          temperature: 2.0,
-          top_p: 0.99,
+          model: "openai/gpt-5.6-luna",
+          temperature: 1.3,
+          seed: Math.floor(Math.random() * 1_000_000),
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: buildPrompt(avoid) },
