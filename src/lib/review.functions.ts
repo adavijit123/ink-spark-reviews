@@ -49,12 +49,16 @@ export const generateReview = createServerFn({ method: "POST" })
 
     const supabase = publicClient();
 
-    const [settingsRes, categoriesRes, presetsRes] = await Promise.all([
+    const [settingsRes, categoriesRes, presetsRes, keywordsRes] = await Promise.all([
       supabase.from("studio_settings").select("*").limit(1).maybeSingle(),
       supabase.from("review_categories").select("id, name, description").eq("is_active", true),
       supabase
         .from("review_presets")
-        .select("id, content, tone, category_id")
+        .select("id, content, tone, category_id, bangla_percent")
+        .eq("is_active", true),
+      supabase
+        .from("review_keywords")
+        .select("keyword, weight_percent")
         .eq("is_active", true),
     ]);
 
@@ -70,20 +74,57 @@ export const generateReview = createServerFn({ method: "POST" })
       : allPresets;
     const presets = pickSome(scoped.length ? scoped : allPresets, 4);
 
-    // Keywords: pick 0–2 at random so different reviews lean on different ones
-    // (and some use none) instead of stuffing every keyword into each review.
-    // Also drop the deprecated "Dhaka Tattoo Studio" keyword just in case.
-    const allKeywords = (settings?.experience_keywords ?? "")
+    // Keywords: each keyword has its own admin-set frequency (weight_percent),
+    // so it shows up in roughly that share of reviews. Max 2 per review, and a
+    // regeneration never repeats the exact same keyword combination.
+    const managed = (keywordsRes.data ?? [])
+      .map((k) => ({ keyword: k.keyword.trim(), weight: k.weight_percent }))
+      .filter((k) => Boolean(k.keyword));
+
+    const fallbackKeywords = (settings?.experience_keywords ?? "")
       .split(/[,\n]/)
       .map((k) => k.trim())
-      .filter((k) => k.toLowerCase() !== "dhaka tattoo studio" && Boolean(k));
-    const keywords = pickSome(allKeywords, Math.floor(Math.random() * 3));
+      .filter((k) => k.toLowerCase() !== "dhaka tattoo studio" && Boolean(k))
+      .map((keyword) => ({ keyword, weight: 40 }));
 
-    // Artist name: mention in ~70% of reviews.
-    const mentionArtist = !!data.artist && Math.random() < 0.7;
+    const keywordPool = managed.length ? managed : fallbackKeywords;
+    const avoidCombo = [...(data.avoidKeywords ?? [])].sort().join("|").toLowerCase();
 
-    // Language: ~25% of reviews in Bangla (Bengali), rest in English.
-    const useBangla = Math.random() < 0.25;
+    function rollKeywords(): string[] {
+      const hits = keywordPool
+        .filter((k) => Math.random() * 100 < k.weight)
+        .map((k) => k.keyword);
+      return pickSome(hits, Math.min(hits.length, 2));
+    }
+
+    let keywords = rollKeywords();
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const combo = [...keywords].sort().join("|").toLowerCase();
+      if (!avoidCombo || combo !== avoidCombo) break;
+      keywords = rollKeywords();
+    }
+
+    // Artist name: customer toggle wins, otherwise the admin-set percentage.
+    const artistPercent = Math.min(100, Math.max(0, settings?.artist_mention_percent ?? 70));
+    const artistMode = data.artistMode ?? "auto";
+    const mentionArtist =
+      !!data.artist &&
+      (artistMode === "always"
+        ? true
+        : artistMode === "never"
+          ? false
+          : Math.random() * 100 < artistPercent);
+
+    // Language: Bangla share comes from the selected presets when configured,
+    // otherwise the studio-wide default.
+    const presetBanglaValues = presets
+      .map((p) => p.bangla_percent)
+      .filter((v): v is number => typeof v === "number");
+    const banglaPercent = presetBanglaValues.length
+      ? presetBanglaValues.reduce((a, b) => a + b, 0) / presetBanglaValues.length
+      : (settings?.bangla_percent ?? 25);
+    const useBangla = Math.random() * 100 < Math.min(100, Math.max(0, banglaPercent));
+
 
     // Vary the review focus/structure each time so regenerations feel different.
     const focusOptions = [
