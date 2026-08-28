@@ -291,7 +291,7 @@ export const generateReview = createServerFn({ method: "POST" })
       }
     }
 
-    return { review: text, categories: selected.map((c) => c.name) };
+    return { review: text, categories: selected.map((c) => c.name), keywords };
   });
 
 function longestCommonSubstringLength(a: string, b: string): number {
