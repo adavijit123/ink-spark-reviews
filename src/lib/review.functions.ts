@@ -147,6 +147,18 @@ export const generateReview = createServerFn({ method: "POST" })
     ].join("\n");
 
     const userPrompt = [
+      data.avoid
+        ? `CRITICAL: Write a review that is clearly DIFFERENT from this previous version. Do NOT reuse its sentences, structure, opening, or main ideas.\nPrevious version:\n${data.avoid}`
+        : "",
+      "",
+      `Voice and perspective for this review:`,
+      `- Write as if you are ${persona}.`,
+      `- The customer's backstory: ${backstory}.`,
+      `- Style: ${style}.`,
+      `- Length: exactly ${sentenceCount} sentences.`,
+      `- Lead with the customer's ${focus}.`,
+      `- The review must ${opening}.`,
+      "",
       `Studio: ${studioName}`,
       settings?.studio_info ? `About: ${settings.studio_info}` : "",
       settings?.services ? `Services: ${settings.services}` : "",
@@ -169,13 +181,8 @@ export const generateReview = createServerFn({ method: "POST" })
             .map((p) => `- (${p.tone}) ${p.content}`)
             .join("\n")}`
         : "",
-      `Write this review as if you are ${persona}. The customer's backstory: ${backstory}.`,
-      `For this review, write exactly ${sentenceCount} sentences. Lead with the customer's ${focus}. Make the style ${style}. The review must ${opening}.`,
-      "This review must be completely different from any previous review. Do NOT repeat the same opening, wording, or structure. Use different vocabulary and a different angle.",
-      data.avoid ? `Write something clearly different from this previous version — do NOT reuse its sentences, structure, or main ideas:\n${data.avoid}` : "",
-      `Unique request nonce: ${Date.now()}-${Math.random().toString(36).slice(2)}`,
       "",
-      "Write the review now.",
+      "Write the review now. Output ONLY the review text.",
     ]
       .filter(Boolean)
       .join("\n");
