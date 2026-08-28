@@ -100,6 +100,15 @@ export const generateReview = createServerFn({ method: "POST" })
     ];
     const style = pickSome(styleOptions, 1)[0] ?? "casual";
 
+    const openingOptions = [
+      "start by describing the studio vibe when you walked in",
+      "start by mentioning the artist's behaviour and patience",
+      "start by describing the final tattoo result in detail",
+      "start by talking about hygiene and the process",
+      "start by saying why you chose this studio",
+    ];
+    const opening = pickSome(openingOptions, 1)[0] ?? "start by describing the studio vibe";
+
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
     const systemPrompt = [
