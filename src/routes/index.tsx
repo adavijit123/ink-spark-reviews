@@ -85,7 +85,6 @@ function ReviewPage() {
         data: {
           categoryIds,
           artist,
-          artistMode,
           avoid: regenerate ? review : undefined,
           avoidKeywords: regenerate ? lastKeywords : undefined,
         },
@@ -175,22 +174,6 @@ function ReviewPage() {
           </div>
         )}
 
-        {artistOptions.length > 0 && (
-          <div className="mt-5">
-            <p className="text-eyebrow">Artist name in the review?</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              <ChipButton active={artistMode === "auto"} onClick={() => setArtistMode("auto")}>
-                Auto
-              </ChipButton>
-              <ChipButton active={artistMode === "always"} onClick={() => setArtistMode("always")}>
-                Include name
-              </ChipButton>
-              <ChipButton active={artistMode === "never"} onClick={() => setArtistMode("never")}>
-                No name
-              </ChipButton>
-            </div>
-          </div>
-        )}
 
 
         {!review ? (
