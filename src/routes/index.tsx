@@ -38,7 +38,6 @@ function ReviewPage() {
   const [busy, setBusy] = useState(false);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [artist, setArtist] = useState<string | null>(null);
-  const [artistMode, setArtistMode] = useState<"auto" | "always" | "never">("auto");
   const [lastKeywords, setLastKeywords] = useState<string[]>([]);
 
 
