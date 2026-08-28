@@ -37,7 +37,8 @@ function ReviewPage() {
   const [editing, setEditing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [artist, setArtist] = useState<string | null>(null);
 
   const { data } = useQuery({
     queryKey: ["studio-public"],
@@ -45,7 +46,7 @@ function ReviewPage() {
       const [settings, categories] = await Promise.all([
         supabase
           .from("studio_settings")
-          .select("studio_name, tagline, google_review_url")
+          .select("studio_name, tagline, google_review_url, artists")
           .limit(1)
           .maybeSingle(),
         supabase
@@ -64,13 +65,24 @@ function ReviewPage() {
   const studioName = data?.settings?.studio_name ?? "InkPark Tattoo Studio";
   const tagline = data?.settings?.tagline ?? "Custom tattoos. Clean lines.";
   const reviewUrl = data?.settings?.google_review_url || FALLBACK_URL;
+  const artistOptions = (data?.settings?.artists ?? "Avijit Saha, Sharif Uddin")
+    .split(/[,\n]/)
+    .map((a) => a.trim())
+    .filter(Boolean);
+
+  function toggleCategory(id: string) {
+    setCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  }
+
 
   async function run(regenerate: boolean) {
     setBusy(true);
     setCopied(false);
     try {
       const result = await generate({
-        data: { categoryId, avoid: regenerate ? review : undefined },
+        data: { categoryIds, artist, avoid: regenerate ? review : undefined },
       });
       setReview(result.review);
       setEditing(false);
@@ -114,16 +126,16 @@ function ReviewPage() {
 
         {(data?.categories.length ?? 0) > 0 && (
           <div className="mt-5">
-            <p className="text-eyebrow">What stood out?</p>
+            <p className="text-eyebrow">What stood out? (pick any)</p>
             <div className="mt-2 flex flex-wrap gap-2">
-              <ChipButton active={categoryId === null} onClick={() => setCategoryId(null)}>
+              <ChipButton active={categoryIds.length === 0} onClick={() => setCategoryIds([])}>
                 Anything
               </ChipButton>
               {data?.categories.map((c) => (
                 <ChipButton
                   key={c.id}
-                  active={categoryId === c.id}
-                  onClick={() => setCategoryId(c.id)}
+                  active={categoryIds.includes(c.id)}
+                  onClick={() => toggleCategory(c.id)}
                 >
                   {c.name}
                 </ChipButton>
@@ -131,6 +143,24 @@ function ReviewPage() {
             </div>
           </div>
         )}
+
+        {artistOptions.length > 0 && (
+          <div className="mt-5">
+            <p className="text-eyebrow">Who was your artist?</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {artistOptions.map((a) => (
+                <ChipButton
+                  key={a}
+                  active={artist === a}
+                  onClick={() => setArtist((prev) => (prev === a ? null : a))}
+                >
+                  {a}
+                </ChipButton>
+              ))}
+            </div>
+          </div>
+        )}
+
 
         {!review ? (
           <Button
