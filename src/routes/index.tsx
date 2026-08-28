@@ -39,6 +39,9 @@ function ReviewPage() {
   const [busy, setBusy] = useState(false);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [artist, setArtist] = useState<string | null>(null);
+  const [artistMode, setArtistMode] = useState<"auto" | "always" | "never">("auto");
+  const [lastKeywords, setLastKeywords] = useState<string[]>([]);
+
 
   const { data } = useQuery({
     queryKey: ["studio-public"],
@@ -82,9 +85,16 @@ function ReviewPage() {
     setCopied(false);
     try {
       const result = await generate({
-        data: { categoryIds, artist, avoid: regenerate ? review : undefined },
+        data: {
+          categoryIds,
+          artist,
+          artistMode,
+          avoid: regenerate ? review : undefined,
+          avoidKeywords: regenerate ? lastKeywords : undefined,
+        },
       });
       setReview(result.review);
+      setLastKeywords(result.keywords ?? []);
       setEditing(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong.");
@@ -93,16 +103,26 @@ function ReviewPage() {
     }
   }
 
-  async function copy() {
+  async function copyText(silent = false) {
+    if (!review.trim()) return false;
     try {
       await navigator.clipboard.writeText(review);
       setCopied(true);
-      toast.success("Review copied — now paste it on Google");
+      toast.success(silent ? "Review copied — paste it on Google" : "Review copied — now paste it on Google");
       setTimeout(() => setCopied(false), 2500);
+      return true;
     } catch {
       toast.error("Copy failed. Select the text and copy manually.");
+      return false;
     }
   }
+
+  async function copyAndOpen() {
+    // Copy first so the customer never lands on Google with an empty clipboard.
+    await copyText(true);
+    window.open(reviewUrl, "_blank", "noopener,noreferrer");
+  }
+
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
@@ -161,6 +181,23 @@ function ReviewPage() {
           </div>
         )}
 
+        {artistOptions.length > 0 && (
+          <div className="mt-5">
+            <p className="text-eyebrow">Artist name in the review?</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <ChipButton active={artistMode === "auto"} onClick={() => setArtistMode("auto")}>
+                Auto
+              </ChipButton>
+              <ChipButton active={artistMode === "always"} onClick={() => setArtistMode("always")}>
+                Include name
+              </ChipButton>
+              <ChipButton active={artistMode === "never"} onClick={() => setArtistMode("never")}>
+                No name
+              </ChipButton>
+            </div>
+          </div>
+        )}
+
 
         {!review ? (
           <Button
@@ -213,7 +250,7 @@ function ReviewPage() {
 
             <Button
               className="h-14 w-full text-base font-semibold uppercase tracking-wide"
-              onClick={copy}
+              onClick={() => copyText()}
               disabled={!review.trim()}
             >
               {copied ? <Check className="size-5" /> : <Copy className="size-5" />}
@@ -223,13 +260,13 @@ function ReviewPage() {
             <Button
               variant="secondary"
               className="h-14 w-full text-base font-semibold uppercase tracking-wide"
-              asChild
+              onClick={copyAndOpen}
+              disabled={!review.trim()}
             >
-              <a href={reviewUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="size-5" />
-                Open Google Reviews
-              </a>
+              <ExternalLink className="size-5" />
+              Copy &amp; open Google Reviews
             </Button>
+
 
             <p className="pt-1 text-center text-xs text-muted-foreground">
               Nothing is posted automatically — you paste and submit it yourself.
