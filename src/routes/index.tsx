@@ -121,17 +121,18 @@ function ReviewPage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
       <header className="text-center">
-        <h1 className="text-5xl leading-none uppercase">{studioName}</h1>
-        <p className="mt-3 text-sm text-muted-foreground">{tagline}</p>
-        <div className="mt-4 flex justify-center gap-1">
+        <h1 className="text-[22px] font-medium leading-tight">{studioName}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{tagline}</p>
+        <div className="mt-4 flex justify-center gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className="size-4 fill-foreground text-foreground" />
+            <Star key={i} className="size-8 fill-[#fbbc04] text-[#fbbc04]" />
           ))}
         </div>
+        <p className="mt-2 text-[15px] text-muted-foreground">Exceptional</p>
       </header>
 
       <section className="panel mt-8 p-5">
-        <h2 className="text-2xl uppercase">Leave us a review</h2>
+        <h2 className="text-lg font-medium">Leave us a review</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Tap generate, tweak the words if you like, copy it and post it on Google. Takes about
           ten seconds.
@@ -178,7 +179,7 @@ function ReviewPage() {
 
         {!review ? (
           <Button
-            className="mt-6 h-14 w-full text-base font-semibold uppercase tracking-wide"
+            className="mt-6 h-14 w-full rounded-full bg-primary text-base font-medium text-primary-foreground"
             onClick={() => run(false)}
             disabled={busy}
           >
@@ -197,10 +198,10 @@ function ReviewPage() {
                 onChange={(e) => setReview(e.target.value)}
                 rows={6}
                 autoFocus
-                className="resize-none bg-secondary text-base leading-relaxed"
+                className="resize-none rounded-xl border-input bg-background text-base leading-relaxed"
               />
             ) : (
-              <div className="rounded-lg border border-hairline bg-secondary p-4 text-[15px] leading-relaxed">
+              <div className="rounded-xl border border-input bg-background p-4 text-[15px] leading-relaxed">
                 {review}
               </div>
             )}
@@ -208,7 +209,7 @@ function ReviewPage() {
             <div className="grid grid-cols-2 gap-3">
               <Button
                 variant="outline"
-                className="h-12 uppercase"
+                className="h-12 rounded-full border-input font-medium text-secondary-foreground"
                 onClick={() => run(true)}
                 disabled={busy}
               >
@@ -217,7 +218,7 @@ function ReviewPage() {
               </Button>
               <Button
                 variant="outline"
-                className="h-12 uppercase"
+                className="h-12 rounded-full border-input font-medium text-secondary-foreground"
                 onClick={() => setEditing((v) => !v)}
               >
                 <Pencil className="size-4" />
@@ -226,8 +227,7 @@ function ReviewPage() {
             </div>
 
             <Button
-              variant="secondary"
-              className="h-14 w-full text-base font-semibold uppercase tracking-wide"
+              className="h-14 w-full rounded-full bg-primary text-base font-medium text-primary-foreground"
               onClick={copyAndOpen}
               disabled={!review.trim()}
             >
@@ -262,8 +262,8 @@ function ChipButton({
       onClick={onClick}
       className={
         active
-          ? "rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-primary-foreground"
-          : "rounded-full border border-input px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+          ? "rounded-lg border border-primary bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground"
+          : "rounded-lg border border-input bg-background px-4 py-2.5 text-sm font-medium text-foreground"
       }
     >
       {children}
