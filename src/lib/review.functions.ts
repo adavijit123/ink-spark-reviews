@@ -175,6 +175,9 @@ export const generateReview = createServerFn({ method: "POST" })
       headers: {
         "Content-Type": "application/json",
         "Lovable-API-Key": apiKey,
+        "Cache-Control": "no-cache, no-store",
+        "Pragma": "no-cache",
+        "X-Request-Nonce": `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       },
       body: JSON.stringify({
         model: "google/gemini-3.7-flash",
