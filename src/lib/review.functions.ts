@@ -92,7 +92,14 @@ export const generateReview = createServerFn({ method: "POST" })
       settings?.services ? `Services: ${settings.services}` : "",
       settings?.artists ? `Artists: ${settings.artists}` : "",
       keywords.length ? `Experience keywords to lean on: ${keywords.join(", ")}` : "",
-      category ? `Review angle: ${category.name} — ${category.description}` : "",
+      selected.length
+        ? `Review angles to weave in naturally (cover all of them):\n${selected
+            .map((c) => `- ${c.name} — ${c.description}`)
+            .join("\n")}`
+        : "",
+      data.artist
+        ? `The customer's tattoo artist was ${data.artist}. Mention ${data.artist} by name as the artist who did the tattoo. Do not name any other artist.`
+        : "",
       presets.length
         ? `Preset ideas for inspiration (rephrase, do not copy):\n${presets
             .map((p) => `- (${p.tone}) ${p.content}`)
