@@ -91,6 +91,15 @@ export const generateReview = createServerFn({ method: "POST" })
     ];
     const focus = pickSome(focusOptions, 1)[0] ?? "overall experience";
 
+    const styleOptions = [
+      "casual and conversational",
+      "a little storytelling",
+      "short and punchy",
+      "warm and appreciative",
+      "detail-focused",
+    ];
+    const style = pickSome(styleOptions, 1)[0] ?? "casual";
+
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
     const systemPrompt = [
