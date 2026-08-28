@@ -127,13 +127,13 @@ export const generateReview = createServerFn({ method: "POST" })
     ];
     const persona = pickSome(personaOptions, 1)[0] ?? "a happy customer";
 
+    const sentenceCount = Math.floor(Math.random() * 5) + 2; // 2 to 6
+
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
     // DEBUG: log generation choices to diagnose duplicate outputs
     console.log("[generateReview] data:", JSON.stringify(data));
     console.log("[generateReview] choices:", JSON.stringify({ keywords, mentionArtist, useBangla, focus, style, opening, backstory, persona, sentenceCount }));
-
-    const sentenceCount = Math.floor(Math.random() * 5) + 2; // 2 to 6
 
     const systemPrompt = [
       settings?.ai_instructions ||
