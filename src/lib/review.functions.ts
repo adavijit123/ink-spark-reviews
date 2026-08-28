@@ -255,8 +255,9 @@ export const generateReview = createServerFn({ method: "POST" })
         },
         body: JSON.stringify({
           model: "openai/gpt-5.6-luna",
-          temperature: 1.3,
-          seed: Math.floor(Math.random() * 1_000_000),
+          // This model only supports the default temperature; variety comes from
+          // the randomized persona/style/keyword prompt instead.
+
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: buildPrompt(avoid) },
