@@ -68,10 +68,11 @@ export const generateReview = createServerFn({ method: "POST" })
 
     // Keywords: pick 0–2 at random so different reviews lean on different ones
     // (and some use none) instead of stuffing every keyword into each review.
+    // Also drop the deprecated "Dhaka Tattoo Studio" keyword just in case.
     const allKeywords = (settings?.experience_keywords ?? "")
       .split(/[,\n]/)
       .map((k) => k.trim())
-      .filter(Boolean);
+      .filter((k) => k.toLowerCase() !== "dhaka tattoo studio" && Boolean(k));
     const keywords = pickSome(allKeywords, Math.floor(Math.random() * 3));
 
     // Artist name: mention in ~70% of reviews.
@@ -80,18 +81,29 @@ export const generateReview = createServerFn({ method: "POST" })
     // Language: ~25% of reviews in Bangla (Bengali), rest in English.
     const useBangla = Math.random() < 0.25;
 
+    // Vary the review focus/structure each time so regenerations feel different.
+    const focusOptions = [
+      "overall experience and vibe",
+      "artist skill and personality",
+      "final tattoo result and quality",
+      "process, hygiene and comfort",
+      "recommendation to friends",
+    ];
+    const focus = pickSome(focusOptions, 1)[0] ?? "overall experience";
+
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
     const systemPrompt = [
       settings?.ai_instructions ||
-        "Write a short, natural-sounding Google review from a happy customer. 2-4 sentences, first person, everyday language.",
+        "Write a natural-sounding Google review from a happy customer of the studio. Use simple everyday first-person language. Vary the review structure every single time.",
       "",
       "Hard rules:",
       "- Output ONLY the review text. No quotes, labels, headings, emojis or hashtags.",
-      "- 2 to 4 sentences, under 400 characters.",
+      "- 2 to 6 sentences, under 700 characters. Mix shorter and longer reviews — some brief, some with a little more detail.",
       "- Sound like a real person typing on their phone, not marketing copy.",
       "- Never invent prices, dates, or promises.",
       "- Use only the keywords given for this review (if any), woven in naturally — never force them.",
+      "- Vary sentence openings: don't start every review with 'I got' or 'The staff'.",
       useBangla
         ? "- Write this review in Bangla (Bengali script), the way a Dhaka customer would naturally type it. Studio and artist names stay in English."
         : "- Write this review in English.",
