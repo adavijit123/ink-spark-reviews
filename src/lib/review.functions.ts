@@ -7,8 +7,11 @@ import type { Database } from "@/integrations/supabase/types";
 const GenerateInput = z.object({
   categoryIds: z.array(z.string().uuid()).max(10).optional(),
   artist: z.string().max(120).nullable().optional(),
+  artistMode: z.enum(["auto", "always", "never"]).optional(),
   avoid: z.string().max(2000).optional(),
+  avoidKeywords: z.array(z.string().max(120)).max(20).optional(),
 });
+
 
 function publicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
