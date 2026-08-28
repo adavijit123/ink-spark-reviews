@@ -120,18 +120,18 @@ export const generateReview = createServerFn({ method: "POST" })
 
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
+    const sentenceCount = Math.floor(Math.random() * 5) + 2; // 2 to 6
+
     const systemPrompt = [
       settings?.ai_instructions ||
         "Write a natural-sounding Google review from a happy customer of the studio. Use simple everyday first-person language. Vary the review structure every single time.",
       "",
       "Hard rules:",
       "- Output ONLY the review text. No quotes, labels, headings, emojis or hashtags.",
-      "- 2 to 6 sentences, under 700 characters. Mix shorter and longer reviews — some brief, some with a little more detail.",
       "- Sound like a real person typing on their phone, not marketing copy.",
       "- Never invent prices, dates, or promises.",
       "- Use only the keywords given for this review (if any), woven in naturally — never force them.",
       "- Vary sentence openings: don't start every review with 'I got' or 'The staff'.",
-      "- Every regeneration must be clearly different. Change the angle, wording, and which details you emphasize.",
       useBangla
         ? "- Write this review in Bangla (Bengali script), the way a Dhaka customer would naturally type it. Studio and artist names stay in English."
         : "- Write this review in English.",
