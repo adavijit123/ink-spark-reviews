@@ -132,9 +132,18 @@ export const generateReview = createServerFn({ method: "POST" })
 
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
+    const framingOptions = [
+      "a WhatsApp message to a close friend recommending the studio",
+      "a short Reddit post sharing your experience",
+      "a casual Facebook comment",
+      "a diary-style note about your visit",
+      "a quick text to a friend asking about tattoos",
+    ];
+    const framing = pickSome(framingOptions, 1)[0] ?? "a Google review";
+
     const systemPrompt = [
       settings?.ai_instructions ||
-        "Write a natural-sounding Google review from a happy customer of the studio. Use simple everyday first-person language. Vary the review structure every single time.",
+        `Write ${framing} from a happy customer of the studio. Use simple everyday first-person language. Every regeneration must use a different angle, opening, and vocabulary.`,
       "",
       "Hard rules:",
       "- Output ONLY the review text. No quotes, labels, headings, emojis or hashtags.",
