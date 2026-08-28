@@ -82,7 +82,7 @@ function ReviewPage() {
     setCopied(false);
     try {
       const result = await generate({
-        data: { categoryId, avoid: regenerate ? review : undefined },
+        data: { categoryIds, artist, avoid: regenerate ? review : undefined },
       });
       setReview(result.review);
       setEditing(false);
