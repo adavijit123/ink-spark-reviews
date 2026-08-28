@@ -169,8 +169,9 @@ export const generateReview = createServerFn({ method: "POST" })
             .map((p) => `- (${p.tone}) ${p.content}`)
             .join("\n")}`
         : "",
-      `For this review, write exactly ${sentenceCount} sentences. Lead with the customer's ${focus}. Make the style ${style}. The review must ${opening}. The customer's backstory: ${backstory}.`,
-      "This review must be completely different from any previous review. Do NOT repeat the same opening, wording, or structure.",
+      `Write this review as if you are ${persona}. The customer's backstory: ${backstory}.`,
+      `For this review, write exactly ${sentenceCount} sentences. Lead with the customer's ${focus}. Make the style ${style}. The review must ${opening}.`,
+      "This review must be completely different from any previous review. Do NOT repeat the same opening, wording, or structure. Use different vocabulary and a different angle.",
       data.avoid ? `Write something clearly different from this previous version — do NOT reuse its sentences, structure, or main ideas:\n${data.avoid}` : "",
       `Unique request nonce: ${Date.now()}-${Math.random().toString(36).slice(2)}`,
       "",
