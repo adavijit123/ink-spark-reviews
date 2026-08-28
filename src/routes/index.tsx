@@ -35,7 +35,6 @@ function ReviewPage() {
   const generate = useServerFn(generateReview);
   const [review, setReview] = useState("");
   const [editing, setEditing] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [artist, setArtist] = useState<string | null>(null);
@@ -107,9 +106,7 @@ function ReviewPage() {
     if (!review.trim()) return false;
     try {
       await navigator.clipboard.writeText(review);
-      setCopied(true);
       toast.success(silent ? "Review copied — paste it on Google" : "Review copied — now paste it on Google");
-      setTimeout(() => setCopied(false), 2500);
       return true;
     } catch {
       toast.error("Copy failed. Select the text and copy manually.");
