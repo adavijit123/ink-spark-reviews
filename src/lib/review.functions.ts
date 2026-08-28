@@ -131,10 +131,6 @@ export const generateReview = createServerFn({ method: "POST" })
 
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
-    // DEBUG: log generation choices to diagnose duplicate outputs
-    console.log("[generateReview] data:", JSON.stringify(data));
-    console.log("[generateReview] choices:", JSON.stringify({ keywords, mentionArtist, useBangla, focus, style, opening, backstory, persona, sentenceCount }));
-
     const systemPrompt = [
       settings?.ai_instructions ||
         "Write a natural-sounding Google review from a happy customer of the studio. Use simple everyday first-person language. Vary the review structure every single time.",
