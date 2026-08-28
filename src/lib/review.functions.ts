@@ -42,6 +42,7 @@ export const generateReview = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured yet.");
+    const lovableApiKey = apiKey;
 
     const supabase = publicClient();
 
@@ -68,10 +69,11 @@ export const generateReview = createServerFn({ method: "POST" })
 
     // Keywords: pick 0–2 at random so different reviews lean on different ones
     // (and some use none) instead of stuffing every keyword into each review.
+    // Also drop the deprecated "Dhaka Tattoo Studio" keyword just in case.
     const allKeywords = (settings?.experience_keywords ?? "")
       .split(/[,\n]/)
       .map((k) => k.trim())
-      .filter(Boolean);
+      .filter((k) => k.toLowerCase() !== "dhaka tattoo studio" && Boolean(k));
     const keywords = pickSome(allKeywords, Math.floor(Math.random() * 3));
 
     // Artist name: mention in ~70% of reviews.
@@ -80,82 +82,192 @@ export const generateReview = createServerFn({ method: "POST" })
     // Language: ~25% of reviews in Bangla (Bengali), rest in English.
     const useBangla = Math.random() < 0.25;
 
+    // Vary the review focus/structure each time so regenerations feel different.
+    const focusOptions = [
+      "overall experience and vibe",
+      "artist skill and personality",
+      "final tattoo result and quality",
+      "process, hygiene and comfort",
+      "recommendation to friends",
+    ];
+    const focus = pickSome(focusOptions, 1)[0] ?? "overall experience";
+
+    const styleOptions = [
+      "casual and conversational",
+      "a little storytelling",
+      "short and punchy",
+      "warm and appreciative",
+      "detail-focused",
+    ];
+    const style = pickSome(styleOptions, 1)[0] ?? "casual";
+
+    const openingOptions = [
+      "start by describing the studio vibe when you walked in",
+      "start by mentioning the artist's behaviour and patience",
+      "start by describing the final tattoo result in detail",
+      "start by talking about hygiene and the process",
+      "start by saying why you chose this studio",
+    ];
+    const opening = pickSome(openingOptions, 1)[0] ?? "start by describing the studio vibe";
+
+    const backstoryOptions = [
+      "this was your first tattoo and you were nervous",
+      "you came in with just a rough idea and trusted the artist",
+      "a friend recommended the studio to you",
+      "you got a cover-up and were worried about the result",
+      "you wanted a custom design for something meaningful",
+    ];
+    const backstory = pickSome(backstoryOptions, 1)[0] ?? "you are a happy customer";
+
+    const personaOptions = [
+      "a 22-year-old university student typing casually on their phone",
+      "a 28-year-old professional keeping it short and direct",
+      "someone excited to recommend the studio to friends",
+      "a first-timer who was nervous but impressed",
+      "a returning customer comparing this visit to past experiences",
+    ];
+    const persona = pickSome(personaOptions, 1)[0] ?? "a happy customer";
+
+    const sentenceCount = Math.floor(Math.random() * 5) + 2; // 2 to 6
+
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
+
+    const framingOptions = [
+      "a WhatsApp message to a close friend recommending the studio",
+      "a short Reddit post sharing your experience",
+      "a casual Facebook comment",
+      "a diary-style note about your visit",
+      "a quick text to a friend asking about tattoos",
+    ];
+    const framing = pickSome(framingOptions, 1)[0] ?? "a Google review";
 
     const systemPrompt = [
       settings?.ai_instructions ||
-        "Write a short, natural-sounding Google review from a happy customer. 2-4 sentences, first person, everyday language.",
+        `Write ${framing} from a happy customer of the studio. Use simple everyday first-person language. Every regeneration must use a different angle, opening, and vocabulary.`,
       "",
       "Hard rules:",
       "- Output ONLY the review text. No quotes, labels, headings, emojis or hashtags.",
-      "- 2 to 4 sentences, under 400 characters.",
       "- Sound like a real person typing on their phone, not marketing copy.",
       "- Never invent prices, dates, or promises.",
       "- Use only the keywords given for this review (if any), woven in naturally — never force them.",
+      "- Vary sentence openings: don't start every review with 'I got' or 'The staff'.",
       useBangla
         ? "- Write this review in Bangla (Bengali script), the way a Dhaka customer would naturally type it. Studio and artist names stay in English."
         : "- Write this review in English.",
     ].join("\n");
 
-    const userPrompt = [
-      `Studio: ${studioName}`,
-      settings?.studio_info ? `About: ${settings.studio_info}` : "",
-      settings?.services ? `Services: ${settings.services}` : "",
-      settings?.artists ? `Artists: ${settings.artists}` : "",
-      keywords.length
-        ? `Keywords to use in THIS review (use naturally, only these): ${keywords.join(", ")}`
-        : "Use no SEO-style keywords in this review — keep it plain and natural.",
-      selected.length
-        ? `Review angles to weave in naturally (cover all of them):\n${selected
-            .map((c) => `- ${c.name} — ${c.description}`)
-            .join("\n")}`
-        : "",
-      data.artist
-        ? mentionArtist
-          ? `The customer's tattoo artist was ${data.artist}. Mention ${data.artist} by name as the artist who did the tattoo. Do not name any other artist.`
-          : `The customer's tattoo artist was ${data.artist}, but do NOT mention any artist name in this review.`
-        : "",
-      presets.length
-        ? `Preset ideas for inspiration (rephrase, do not copy):\n${presets
-            .map((p) => `- (${p.tone}) ${p.content}`)
-            .join("\n")}`
-        : "",
-      data.avoid ? `Write something clearly different from this previous version:\n${data.avoid}` : "",
-      `Randomness seed: ${Math.random().toString(36).slice(2)}`,
-      "",
-      "Write the review now.",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": apiKey,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3.7-flash",
-        temperature: 1.1,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-      }),
-    });
-
-    if (!res.ok) {
-      const detail = await res.text();
-      if (res.status === 429) throw new Error("Too many requests right now — try again in a moment.");
-      if (res.status === 402) throw new Error("AI credits are exhausted. Please contact the studio.");
-      throw new Error(`Review generation failed (${res.status}). ${detail.slice(0, 200)}`);
+    function buildPrompt(avoid?: string) {
+      return [
+        avoid
+          ? `CRITICAL: Write a review that is clearly DIFFERENT from this previous version. Do NOT reuse its sentences, structure, opening, or main ideas.\nPrevious version:\n${avoid}`
+          : "",
+        "",
+        `Voice and perspective for this review:`,
+        `- Write as if you are ${persona}.`,
+        `- The customer's backstory: ${backstory}.`,
+        `- Style: ${style}.`,
+        `- Length: exactly ${sentenceCount} sentences.`,
+        `- Lead with the customer's ${focus}.`,
+        `- The review must ${opening}.`,
+        "",
+        `Studio: ${studioName}`,
+        settings?.studio_info ? `About: ${settings.studio_info}` : "",
+        settings?.services ? `Services: ${settings.services}` : "",
+        settings?.artists ? `Artists: ${settings.artists}` : "",
+        keywords.length
+          ? `Keywords to use in THIS review (use naturally, only these): ${keywords.join(", ")}`
+          : "Use no SEO-style keywords in this review — keep it plain and natural.",
+        selected.length
+          ? `Review angles to weave in naturally (cover all of them):\n${selected
+              .map((c) => `- ${c.name} — ${c.description}`)
+              .join("\n")}`
+          : "",
+        data.artist
+          ? mentionArtist
+            ? `The customer's tattoo artist was ${data.artist}. Mention ${data.artist} by name as the artist who did the tattoo. Do not name any other artist.`
+            : `The customer's tattoo artist was ${data.artist}, but do NOT mention any artist name in this review.`
+          : "",
+        presets.length
+          ? `Preset ideas for inspiration (rephrase, do not copy):\n${presets
+              .map((p) => `- (${p.tone}) ${p.content}`)
+              .join("\n")}`
+          : "",
+        "",
+        "Write the review now. Output ONLY the review text.",
+      ]
+        .filter(Boolean)
+        .join("\n");
     }
 
-    const payload = (await res.json()) as {
-      choices?: { message?: { content?: string } }[];
-    };
-    const text = (payload.choices?.[0]?.message?.content ?? "").trim().replace(/^["']|["']$/g, "");
+    async function callAi(avoid?: string): Promise<string> {
+      const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Lovable-API-Key": lovableApiKey,
+          "Cache-Control": "no-cache, no-store",
+          "Pragma": "no-cache",
+          "X-Request-Nonce": `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-5.6-luna",
+          temperature: 1.3,
+          seed: Math.floor(Math.random() * 1_000_000),
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: buildPrompt(avoid) },
+          ],
+        }),
+      });
+
+      if (!res.ok) {
+        const detail = await res.text();
+        if (res.status === 429) throw new Error("Too many requests right now — try again in a moment.");
+        if (res.status === 402) throw new Error("AI credits are exhausted. Please contact the studio.");
+        throw new Error(`Review generation failed (${res.status}). ${detail.slice(0, 200)}`);
+      }
+
+      const payload = (await res.json()) as {
+        choices?: { message?: { content?: string } }[];
+      };
+      return (payload.choices?.[0]?.message?.content ?? "").trim().replace(/^["']|["']$/g, "");
+    }
+
+    let text = await callAi(data.avoid);
     if (!text) throw new Error("The AI returned an empty review. Try again.");
+
+    // If a previous review exists and the new one is too similar, retry once with stronger avoidance.
+    if (data.avoid) {
+      const normalizedNew = text.toLowerCase().replace(/[^a-z\u0980-\u09ff]/g, "");
+      const normalizedOld = data.avoid.toLowerCase().replace(/[^a-z\u0980-\u09ff]/g, "");
+      const similarity = longestCommonSubstringLength(normalizedNew, normalizedOld) / Math.max(normalizedNew.length, normalizedOld.length, 1);
+      if (similarity > 0.45) {
+        const retry = await callAi(data.avoid);
+        if (retry) text = retry;
+      }
+    }
 
     return { review: text, categories: selected.map((c) => c.name) };
   });
+
+function longestCommonSubstringLength(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  if (!m || !n) return 0;
+  let max = 0;
+  const dp = new Uint16Array(n + 1);
+  for (let i = 1; i <= m; i++) {
+    let prev = 0;
+    for (let j = 1; j <= n; j++) {
+      const temp = dp[j] ?? 0;
+      if (a[i - 1] === b[j - 1]) {
+        dp[j] = prev + 1;
+        max = Math.max(max, dp[j]!);
+      } else {
+        dp[j] = 0;
+      }
+      prev = temp;
+    }
+  }
+  return max;
+}
