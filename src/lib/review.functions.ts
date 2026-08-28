@@ -65,13 +65,20 @@ export const generateReview = createServerFn({ method: "POST" })
       ? allPresets.filter((p) => p.category_id && selectedIds.includes(p.category_id))
       : allPresets;
     const presets = pickSome(scoped.length ? scoped : allPresets, 4);
-    const keywords = pickSome(
-      (settings?.experience_keywords ?? "")
-        .split(/[,\n]/)
-        .map((k) => k.trim())
-        .filter(Boolean),
-      3,
-    );
+
+    // Keywords: pick 0–2 at random so different reviews lean on different ones
+    // (and some use none) instead of stuffing every keyword into each review.
+    const allKeywords = (settings?.experience_keywords ?? "")
+      .split(/[,\n]/)
+      .map((k) => k.trim())
+      .filter(Boolean);
+    const keywords = pickSome(allKeywords, Math.floor(Math.random() * 3));
+
+    // Artist name: mention in ~70% of reviews.
+    const mentionArtist = !!data.artist && Math.random() < 0.7;
+
+    // Language: ~25% of reviews in Bangla (Bengali), rest in English.
+    const useBangla = Math.random() < 0.25;
 
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
@@ -84,6 +91,10 @@ export const generateReview = createServerFn({ method: "POST" })
       "- 2 to 4 sentences, under 400 characters.",
       "- Sound like a real person typing on their phone, not marketing copy.",
       "- Never invent prices, dates, or promises.",
+      "- Use only the keywords given for this review (if any), woven in naturally — never force them.",
+      useBangla
+        ? "- Write this review in Bangla (Bengali script), the way a Dhaka customer would naturally type it. Studio and artist names stay in English."
+        : "- Write this review in English.",
     ].join("\n");
 
     const userPrompt = [
@@ -91,14 +102,18 @@ export const generateReview = createServerFn({ method: "POST" })
       settings?.studio_info ? `About: ${settings.studio_info}` : "",
       settings?.services ? `Services: ${settings.services}` : "",
       settings?.artists ? `Artists: ${settings.artists}` : "",
-      keywords.length ? `Experience keywords to lean on: ${keywords.join(", ")}` : "",
+      keywords.length
+        ? `Keywords to use in THIS review (use naturally, only these): ${keywords.join(", ")}`
+        : "Use no SEO-style keywords in this review — keep it plain and natural.",
       selected.length
         ? `Review angles to weave in naturally (cover all of them):\n${selected
             .map((c) => `- ${c.name} — ${c.description}`)
             .join("\n")}`
         : "",
       data.artist
-        ? `The customer's tattoo artist was ${data.artist}. Mention ${data.artist} by name as the artist who did the tattoo. Do not name any other artist.`
+        ? mentionArtist
+          ? `The customer's tattoo artist was ${data.artist}. Mention ${data.artist} by name as the artist who did the tattoo. Do not name any other artist.`
+          : `The customer's tattoo artist was ${data.artist}, but do NOT mention any artist name in this review.`
         : "",
       presets.length
         ? `Preset ideas for inspiration (rephrase, do not copy):\n${presets
