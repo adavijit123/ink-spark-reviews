@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Copy, Check, RefreshCw, Sparkles, Star, ExternalLink, Pencil } from "lucide-react";
+import { RefreshCw, Sparkles, Star, ExternalLink, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -35,7 +35,6 @@ function ReviewPage() {
   const generate = useServerFn(generateReview);
   const [review, setReview] = useState("");
   const [editing, setEditing] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [artist, setArtist] = useState<string | null>(null);
@@ -82,7 +81,6 @@ function ReviewPage() {
 
   async function run(regenerate: boolean) {
     setBusy(true);
-    setCopied(false);
     try {
       const result = await generate({
         data: {
@@ -107,9 +105,7 @@ function ReviewPage() {
     if (!review.trim()) return false;
     try {
       await navigator.clipboard.writeText(review);
-      setCopied(true);
       toast.success(silent ? "Review copied — paste it on Google" : "Review copied — now paste it on Google");
-      setTimeout(() => setCopied(false), 2500);
       return true;
     } catch {
       toast.error("Copy failed. Select the text and copy manually.");
@@ -127,8 +123,7 @@ function ReviewPage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
       <header className="text-center">
-        <p className="text-eyebrow">Tattoo Studio</p>
-        <h1 className="mt-2 text-5xl leading-none uppercase">{studioName}</h1>
+        <h1 className="text-5xl leading-none uppercase">{studioName}</h1>
         <p className="mt-3 text-sm text-muted-foreground">{tagline}</p>
         <div className="mt-4 flex justify-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -249,15 +244,6 @@ function ReviewPage() {
             </div>
 
             <Button
-              className="h-14 w-full text-base font-semibold uppercase tracking-wide"
-              onClick={() => copyText()}
-              disabled={!review.trim()}
-            >
-              {copied ? <Check className="size-5" /> : <Copy className="size-5" />}
-              {copied ? "Copied" : "Copy review"}
-            </Button>
-
-            <Button
               variant="secondary"
               className="h-14 w-full text-base font-semibold uppercase tracking-wide"
               onClick={copyAndOpen}
@@ -275,11 +261,6 @@ function ReviewPage() {
         )}
       </section>
 
-      <footer className="mt-auto pt-10 text-center">
-        <Link to="/admin" className="text-xs uppercase tracking-widest text-muted-foreground">
-          Studio admin
-        </Link>
-      </footer>
     </main>
   );
 }
