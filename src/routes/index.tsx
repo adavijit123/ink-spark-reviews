@@ -127,8 +127,7 @@ function ReviewPage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
       <header className="text-center">
-        <p className="text-eyebrow">Tattoo Studio</p>
-        <h1 className="mt-2 text-5xl leading-none uppercase">{studioName}</h1>
+        <h1 className="text-5xl leading-none uppercase">{studioName}</h1>
         <p className="mt-3 text-sm text-muted-foreground">{tagline}</p>
         <div className="mt-4 flex justify-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -249,15 +248,6 @@ function ReviewPage() {
             </div>
 
             <Button
-              className="h-14 w-full text-base font-semibold uppercase tracking-wide"
-              onClick={() => copyText()}
-              disabled={!review.trim()}
-            >
-              {copied ? <Check className="size-5" /> : <Copy className="size-5" />}
-              {copied ? "Copied" : "Copy review"}
-            </Button>
-
-            <Button
               variant="secondary"
               className="h-14 w-full text-base font-semibold uppercase tracking-wide"
               onClick={copyAndOpen}
@@ -275,11 +265,6 @@ function ReviewPage() {
         )}
       </section>
 
-      <footer className="mt-auto pt-10 text-center">
-        <Link to="/admin" className="text-xs uppercase tracking-widest text-muted-foreground">
-          Studio admin
-        </Link>
-      </footer>
     </main>
   );
 }
