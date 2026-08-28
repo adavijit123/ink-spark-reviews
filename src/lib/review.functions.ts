@@ -118,6 +118,15 @@ export const generateReview = createServerFn({ method: "POST" })
     ];
     const backstory = pickSome(backstoryOptions, 1)[0] ?? "you are a happy customer";
 
+    const personaOptions = [
+      "a 22-year-old university student typing casually on their phone",
+      "a 28-year-old professional keeping it short and direct",
+      "someone excited to recommend the studio to friends",
+      "a first-timer who was nervous but impressed",
+      "a returning customer comparing this visit to past experiences",
+    ];
+    const persona = pickSome(personaOptions, 1)[0] ?? "a happy customer";
+
     const studioName = settings?.studio_name || "InkPark Tattoo Studio";
 
     const sentenceCount = Math.floor(Math.random() * 5) + 2; // 2 to 6
