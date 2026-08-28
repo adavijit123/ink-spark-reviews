@@ -85,9 +85,16 @@ function ReviewPage() {
     setCopied(false);
     try {
       const result = await generate({
-        data: { categoryIds, artist, avoid: regenerate ? review : undefined },
+        data: {
+          categoryIds,
+          artist,
+          artistMode,
+          avoid: regenerate ? review : undefined,
+          avoidKeywords: regenerate ? lastKeywords : undefined,
+        },
       });
       setReview(result.review);
+      setLastKeywords(result.keywords ?? []);
       setEditing(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong.");
@@ -96,16 +103,26 @@ function ReviewPage() {
     }
   }
 
-  async function copy() {
+  async function copyText(silent = false) {
+    if (!review.trim()) return false;
     try {
       await navigator.clipboard.writeText(review);
       setCopied(true);
-      toast.success("Review copied — now paste it on Google");
+      toast.success(silent ? "Review copied — paste it on Google" : "Review copied — now paste it on Google");
       setTimeout(() => setCopied(false), 2500);
+      return true;
     } catch {
       toast.error("Copy failed. Select the text and copy manually.");
+      return false;
     }
   }
+
+  async function copyAndOpen() {
+    // Copy first so the customer never lands on Google with an empty clipboard.
+    await copyText(true);
+    window.open(reviewUrl, "_blank", "noopener,noreferrer");
+  }
+
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
