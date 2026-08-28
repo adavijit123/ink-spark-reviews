@@ -65,6 +65,17 @@ function ReviewPage() {
   const studioName = data?.settings?.studio_name ?? "InkPark Tattoo Studio";
   const tagline = data?.settings?.tagline ?? "Custom tattoos. Clean lines.";
   const reviewUrl = data?.settings?.google_review_url || FALLBACK_URL;
+  const artistOptions = (data?.settings?.artists ?? "Avijit Saha, Sharif Uddin")
+    .split(/[,\n]/)
+    .map((a) => a.trim())
+    .filter(Boolean);
+
+  function toggleCategory(id: string) {
+    setCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  }
+
 
   async function run(regenerate: boolean) {
     setBusy(true);
