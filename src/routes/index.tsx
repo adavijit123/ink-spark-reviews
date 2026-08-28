@@ -37,7 +37,8 @@ function ReviewPage() {
   const [editing, setEditing] = useState(false);
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [artist, setArtist] = useState<string | null>(null);
 
   const { data } = useQuery({
     queryKey: ["studio-public"],
@@ -45,7 +46,7 @@ function ReviewPage() {
       const [settings, categories] = await Promise.all([
         supabase
           .from("studio_settings")
-          .select("studio_name, tagline, google_review_url")
+          .select("studio_name, tagline, google_review_url, artists")
           .limit(1)
           .maybeSingle(),
         supabase
