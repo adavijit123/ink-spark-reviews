@@ -290,7 +290,10 @@ function PresetsPanel({
       category_id: categoryId || null,
       sort_order: presets.length + 1,
     });
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setContent("");
     onChanged();
     toast.success("Preset added");
@@ -301,13 +304,19 @@ function PresetsPanel({
       .from("review_presets")
       .update({ is_active: !preset.is_active })
       .eq("id", preset.id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     onChanged();
   }
 
   async function remove(id: string) {
     const { error } = await supabase.from("review_presets").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     onChanged();
     toast.success("Preset removed");
   }
@@ -383,7 +392,10 @@ function CategoriesPanel({
       description: description.trim(),
       sort_order: categories.length + 1,
     });
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     setName("");
     setDescription("");
     onChanged();
@@ -395,13 +407,19 @@ function CategoriesPanel({
       .from("review_categories")
       .update({ is_active: !category.is_active })
       .eq("id", category.id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     onChanged();
   }
 
   async function remove(id: string) {
     const { error } = await supabase.from("review_categories").delete().eq("id", id);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     onChanged();
   }
 
@@ -470,7 +488,10 @@ function StudioPanel({
     setBusy(true);
     const { error } = await supabase.from("studio_settings").update(form!).eq("id", settings!.id);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     onChanged();
     toast.success("Saved");
   }
