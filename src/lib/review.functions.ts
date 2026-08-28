@@ -5,7 +5,8 @@ import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
 const GenerateInput = z.object({
-  categoryId: z.string().uuid().nullable().optional(),
+  categoryIds: z.array(z.string().uuid()).max(10).optional(),
+  artist: z.string().max(120).nullable().optional(),
   avoid: z.string().max(2000).optional(),
 });
 
