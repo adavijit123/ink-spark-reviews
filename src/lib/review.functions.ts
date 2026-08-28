@@ -113,6 +113,7 @@ export const generateReview = createServerFn({ method: "POST" })
       "- Never invent prices, dates, or promises.",
       "- Use only the keywords given for this review (if any), woven in naturally — never force them.",
       "- Vary sentence openings: don't start every review with 'I got' or 'The staff'.",
+      "- Every regeneration must be clearly different. Change the angle, wording, and which details you emphasize.",
       useBangla
         ? "- Write this review in Bangla (Bengali script), the way a Dhaka customer would naturally type it. Studio and artist names stay in English."
         : "- Write this review in English.",
