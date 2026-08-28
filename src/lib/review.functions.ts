@@ -142,8 +142,8 @@ export const generateReview = createServerFn({ method: "POST" })
             .map((p) => `- (${p.tone}) ${p.content}`)
             .join("\n")}`
         : "",
-      `For this review, lead with the customer's ${focus}. Make it feel different from previous reviews.`,
-      data.avoid ? `Write something clearly different from this previous version:\n${data.avoid}` : "",
+      `For this review, lead with the customer's ${focus}. Make the style ${style}. Make it feel completely different from previous reviews.`,
+      data.avoid ? `Write something clearly different from this previous version — do NOT reuse its sentences or structure:\n${data.avoid}` : "",
       `Randomness seed: ${Math.random().toString(36).slice(2)}`,
       "",
       "Write the review now.",
