@@ -223,6 +223,6 @@ export const generateReview = createServerFn({ method: "POST" })
     return {
       review: text,
       categories: selected.map((c) => c.name),
-      debug: { keywords, focus, style, opening, backstory, persona, sentenceCount, useBangla, mentionArtist, avoid: data.avoid?.slice(0, 50) },
+      debug: JSON.stringify({ keywords, focus, style, opening, backstory, persona, sentenceCount, useBangla, mentionArtist, avoid: data.avoid?.slice(0, 50) }),
     };
   });
