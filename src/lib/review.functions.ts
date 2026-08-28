@@ -250,7 +250,7 @@ function longestCommonSubstringLength(a: string, b: string): number {
   for (let i = 1; i <= m; i++) {
     let prev = 0;
     for (let j = 1; j <= n; j++) {
-      const temp = dp[j];
+      const temp = dp[j] ?? 0;
       if (a[i - 1] === b[j - 1]) {
         dp[j] = prev + 1;
         max = Math.max(max, dp[j]!);
