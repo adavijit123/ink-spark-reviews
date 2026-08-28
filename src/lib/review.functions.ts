@@ -195,7 +195,7 @@ export const generateReview = createServerFn({ method: "POST" })
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Lovable-API-Key": apiKey,
+          "Lovable-API-Key": lovableApiKey,
           "Cache-Control": "no-cache, no-store",
           "Pragma": "no-cache",
           "X-Request-Nonce": `${Date.now()}-${Math.random().toString(36).slice(2)}`,
