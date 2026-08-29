@@ -182,10 +182,10 @@ function ReviewPage() {
           <p className="text-eyebrow">Review language</p>
           <div className="mt-2 flex flex-wrap gap-2">
             <ChipButton
-              active={language === "en"}
+              active={false}
               onClick={() => setLanguage(language === "en" ? "bn" : "en")}
             >
-              English
+              {language === "en" ? "English" : "Bangla"}
             </ChipButton>
           </div>
         </div>
