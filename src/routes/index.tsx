@@ -177,7 +177,7 @@ function ReviewPage() {
                   {a}
                 </ChipButton>
               ))}
-              <div className="ml-auto flex items-center gap-2">
+              <div className="ml-auto flex items-center gap-1.5">
                 <ChipButton active={language === "en"} onClick={() => setLanguage("en")}>
                   English
                 </ChipButton>
