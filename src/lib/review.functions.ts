@@ -267,6 +267,12 @@ export const generateReview = createServerFn({ method: "POST" })
             ? `The customer's tattoo artist was ${data.artist}. Mention ${data.artist} by name as the artist who did the tattoo. Do not name any other artist.`
             : `The customer's tattoo artist was ${data.artist}, but do NOT mention any artist name in this review.`
           : "",
+        artistTraits.length
+          ? `True details about this artist — reflect these naturally in the customer's own words (do not list them):\n${artistTraits
+              .map((t) => `- ${t}`)
+              .join("\n")}`
+          : "",
+
         presets.length
           ? `Preset ideas for inspiration (rephrase, do not copy):\n${presets
               .map((p) => `- (${p.tone}) ${p.content}`)
