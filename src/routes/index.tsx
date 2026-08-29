@@ -107,7 +107,6 @@ function ReviewPage() {
       });
       setReview(result.review);
       setLastKeywords(result.keywords ?? []);
-      setEditing(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong.");
     } finally {
