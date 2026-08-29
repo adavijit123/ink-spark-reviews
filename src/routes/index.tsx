@@ -136,8 +136,12 @@ function ReviewPage() {
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
       <header className="text-center">
-        <h1 className="text-[22px] font-medium leading-tight">{studioName}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{tagline}</p>
+        <h1 className="text-[22px] font-semibold leading-tight tracking-wide uppercase">
+          INKPARK TATTOO STUDIO
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Custom Tattoos. Clean Lines. Zero Rush.
+        </p>
         <div className="mt-4 flex justify-center gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star key={i} className="size-8 fill-[#fbbc04] text-[#fbbc04]" />
@@ -155,7 +159,7 @@ function ReviewPage() {
 
         {(data?.categories.length ?? 0) > 0 && (
           <div className="mt-5">
-            <p className="text-eyebrow">What stood out? (pick any)</p>
+            <p className="text-eyebrow">What stood out? (Pick Any)</p>
             <div className="mt-2 flex flex-wrap gap-2">
               <ChipButton active={categoryIds.length === 0} onClick={() => setCategoryIds([])}>
                 Anything
