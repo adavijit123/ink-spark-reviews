@@ -122,8 +122,21 @@ function ReviewPage() {
       if (!silent) toast.success("Review copied — now paste it on Google");
       return true;
     } catch {
-      if (!silent) toast.error("Copy failed. Select the text and copy manually.");
-      return false;
+      const textArea = document.createElement("textarea");
+      textArea.value = review;
+      textArea.setAttribute("readonly", "");
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      textArea.setSelectionRange(0, textArea.value.length);
+      const copiedSuccessfully = document.execCommand("copy");
+      document.body.removeChild(textArea);
+      if (!silent && copiedSuccessfully) toast.success("Review copied — now paste it on Google");
+      if (!silent && !copiedSuccessfully) {
+        toast.error("Copy failed. Select the text and copy manually.");
+      }
+      return copiedSuccessfully;
     }
   }
 
@@ -141,7 +154,6 @@ function ReviewPage() {
       setCopied(true);
     }
 
-    return () => window.clearTimeout(redirect);
   }
 
 
