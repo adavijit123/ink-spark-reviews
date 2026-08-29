@@ -8,6 +8,7 @@ const GenerateInput = z.object({
   categoryIds: z.array(z.string().uuid()).max(10).optional(),
   artist: z.string().max(120).nullable().optional(),
   artistMode: z.enum(["auto", "always", "never"]).optional(),
+  language: z.enum(["en", "bn"]).optional(),
   avoid: z.string().max(2000).optional(),
   avoidKeywords: z.array(z.string().max(120)).max(20).optional(),
 });
@@ -123,7 +124,13 @@ export const generateReview = createServerFn({ method: "POST" })
     const banglaPercent = presetBanglaValues.length
       ? presetBanglaValues.reduce((a, b) => a + b, 0) / presetBanglaValues.length
       : (settings?.bangla_percent ?? 25);
-    const useBangla = Math.random() * 100 < Math.min(100, Math.max(0, banglaPercent));
+    // Customer toggle wins; otherwise the studio/preset percentage roll.
+    const useBangla =
+      data.language === "bn"
+        ? true
+        : data.language === "en"
+          ? false
+          : Math.random() * 100 < Math.min(100, Math.max(0, banglaPercent));
 
 
     // Vary the review focus/structure each time so regenerations feel different.
