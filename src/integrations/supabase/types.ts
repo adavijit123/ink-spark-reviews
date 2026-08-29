@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      artist_profiles: {
+        Row: {
+          aftercare_guidance: string
+          attention_to_detail: string
+          consultation: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          professionalism: string
+          sort_order: number
+          tattoo_style: string
+          updated_at: string
+        }
+        Insert: {
+          aftercare_guidance?: string
+          attention_to_detail?: string
+          consultation?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          professionalism?: string
+          sort_order?: number
+          tattoo_style?: string
+          updated_at?: string
+        }
+        Update: {
+          aftercare_guidance?: string
+          attention_to_detail?: string
+          consultation?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          professionalism?: string
+          sort_order?: number
+          tattoo_style?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       review_categories: {
         Row: {
           created_at: string
