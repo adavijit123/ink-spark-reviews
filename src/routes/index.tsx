@@ -162,24 +162,22 @@ function ReviewPage() {
         )}
 
         {artistOptions.length > 0 && (
-          <div className="mt-5 grid grid-cols-[1fr_auto] items-end gap-4">
-            <div className="space-y-2">
+          <div className="mt-5">
+            <div className="flex items-center justify-between">
               <p className="text-eyebrow">Who was your artist?</p>
-              <div className="flex flex-wrap gap-2">
-                {artistOptions.map((a) => (
-                  <ChipButton
-                    key={a}
-                    active={artist === a}
-                    onClick={() => setArtist((prev) => (prev === a ? null : a))}
-                  >
-                    {a}
-                  </ChipButton>
-                ))}
-              </div>
-            </div>
-            <div className="space-y-2">
               <p className="text-eyebrow">Language</p>
-              <div className="flex flex-wrap gap-2">
+            </div>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {artistOptions.map((a) => (
+                <ChipButton
+                  key={a}
+                  active={artist === a}
+                  onClick={() => setArtist((prev) => (prev === a ? null : a))}
+                >
+                  {a}
+                </ChipButton>
+              ))}
+              <div className="ml-auto flex items-center gap-2">
                 <ChipButton active={language === "en"} onClick={() => setLanguage("en")}>
                   English
                 </ChipButton>
