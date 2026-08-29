@@ -142,8 +142,6 @@ function ReviewPage() {
   async function copyAndOpen() {
     // Copy first so the customer never lands on Google with an empty clipboard.
     await copyText(true);
-    void logEvent("copy_open", { language, artist });
-    setShowConfirm(true);
     window.open(reviewUrl, "_blank", "noopener,noreferrer");
   }
 
