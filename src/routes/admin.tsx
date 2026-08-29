@@ -255,18 +255,14 @@ function AdminDashboard() {
         </Button>
       </div>
 
-      <Tabs defaultValue="stats" className="mt-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="stats">Stats</TabsTrigger>
+      <Tabs defaultValue="presets" className="mt-6">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="presets">Presets</TabsTrigger>
           <TabsTrigger value="categories">Angles</TabsTrigger>
           <TabsTrigger value="keywords">Keywords</TabsTrigger>
           <TabsTrigger value="studio">Studio</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="stats" className="mt-4">
-          <StatsPanel />
-        </TabsContent>
 
         <TabsContent value="presets" className="mt-4">
           <PresetsPanel
