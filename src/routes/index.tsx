@@ -145,14 +145,14 @@ function ReviewPage() {
         <img
           src={googleReviewLogo}
           alt="Review us on Google"
-          className="mx-auto mt-3 w-64 max-w-full"
+          className="mx-auto mt-1.5 w-64 max-w-full"
         />
-        <div className="mt-2 flex justify-center gap-2">
+        <div className="mt-1.5 flex justify-center gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star key={i} className="size-8 fill-[#fbbc04] text-[#fbbc04]" />
           ))}
         </div>
-        <p className="mt-2 text-[15px] text-muted-foreground">Exceptional</p>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">Exceptional</p>
       </header>
 
       <section className="panel mt-8 p-5">
