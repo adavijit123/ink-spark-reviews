@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { generateReview } from "@/lib/review.functions";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
 
 const FALLBACK_URL = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
 
@@ -46,7 +46,6 @@ export const Route = createFileRoute("/")({
 function ReviewPage() {
   const generate = useServerFn(generateReview);
   const [review, setReview] = useState("");
-  const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [artist, setArtist] = useState<string | null>(null);
