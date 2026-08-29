@@ -162,28 +162,46 @@ function ReviewPage() {
         )}
 
         {artistOptions.length > 0 && (
-          <div className="mt-5">
-            <div className="flex items-center justify-between">
+          <div className="mt-5 flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
               <p className="text-eyebrow">Who was your artist?</p>
-              <p className="text-eyebrow">Language</p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {artistOptions.map((a) => (
+                  <ChipButton
+                    key={a}
+                    active={artist === a}
+                    onClick={() => setArtist((prev) => (prev === a ? null : a))}
+                  >
+                    {a}
+                  </ChipButton>
+                ))}
+              </div>
             </div>
-            <div className="mt-2 flex flex-nowrap items-center gap-1.5">
-              {artistOptions.map((a) => (
-                <ChipButton
-                  key={a}
-                  active={artist === a}
-                  onClick={() => setArtist((prev) => (prev === a ? null : a))}
+            <div className="flex flex-col items-start">
+              <p className="text-eyebrow">Language</p>
+              <div className="mt-2 inline-flex items-center rounded-full border border-input bg-background p-1">
+                <button
+                  type="button"
+                  onClick={() => setLanguage("en")}
+                  className={
+                    language === "en"
+                      ? "rounded-full bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+                      : "rounded-full px-3 py-2 text-sm font-medium text-foreground"
+                  }
                 >
-                  {a}
-                </ChipButton>
-              ))}
-              <div className="ml-auto flex items-center gap-1.5">
-                <ChipButton active={language === "en"} onClick={() => setLanguage("en")}>
                   English
-                </ChipButton>
-                <ChipButton active={language === "bn"} onClick={() => setLanguage("bn")}>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLanguage("bn")}
+                  className={
+                    language === "bn"
+                      ? "rounded-full bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+                      : "rounded-full px-3 py-2 text-sm font-medium text-foreground"
+                  }
+                >
                   বাংলা
-                </ChipButton>
+                </button>
               </div>
             </div>
           </div>
