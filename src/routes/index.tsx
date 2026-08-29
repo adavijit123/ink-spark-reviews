@@ -179,14 +179,14 @@ function ReviewPage() {
             </div>
             <div className="flex flex-col items-start">
               <p className="text-eyebrow">Language</p>
-              <div className="mt-2 inline-flex items-center rounded-full border border-input bg-background p-1">
+              <div className="mt-2 inline-flex items-center rounded-2xl border border-input bg-background p-1">
                 <button
                   type="button"
                   onClick={() => setLanguage("en")}
                   className={
                     language === "en"
-                      ? "rounded-full bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-                      : "rounded-full px-3 py-2 text-sm font-medium text-foreground"
+                      ? "rounded-xl border border-primary bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
+                      : "rounded-xl px-3 py-2 text-sm font-medium text-foreground"
                   }
                 >
                   English
@@ -196,8 +196,8 @@ function ReviewPage() {
                   onClick={() => setLanguage("bn")}
                   className={
                     language === "bn"
-                      ? "rounded-full bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-                      : "rounded-full px-3 py-2 text-sm font-medium text-foreground"
+                      ? "rounded-xl border border-primary bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
+                      : "rounded-xl px-3 py-2 text-sm font-medium text-foreground"
                   }
                 >
                   বাংলা
