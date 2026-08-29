@@ -163,7 +163,38 @@ function ReviewPage() {
 
         {artistOptions.length > 0 && (
           <div className="mt-5">
-            <p className="text-eyebrow">Who was your artist?</p>
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-eyebrow">Who was your artist?</p>
+              <div className="flex flex-col items-end gap-1.5">
+                <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  Language
+                </span>
+                <div className="inline-flex items-center rounded-full border border-input bg-background p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setLanguage("en")}
+                    className={
+                      language === "en"
+                        ? "rounded-full border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
+                        : "rounded-full px-3 py-1.5 text-xs font-medium text-foreground"
+                    }
+                  >
+                    English
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLanguage("bn")}
+                    className={
+                      language === "bn"
+                        ? "rounded-full border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
+                        : "rounded-full px-3 py-1.5 text-xs font-medium text-foreground"
+                    }
+                  >
+                    Bangla
+                  </button>
+                </div>
+              </div>
+            </div>
             <div className="mt-2 flex flex-wrap gap-2">
               {artistOptions.map((a) => (
                 <ChipButton
@@ -177,18 +208,6 @@ function ReviewPage() {
             </div>
           </div>
         )}
-
-        <div className="mt-5">
-          <p className="text-eyebrow">Review language</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <ChipButton
-              active={false}
-              onClick={() => setLanguage(language === "en" ? "bn" : "en")}
-            >
-              {language === "en" ? "English" : "Bangla"}
-            </ChipButton>
-          </div>
-        </div>
 
         {!review ? (
           <Button
