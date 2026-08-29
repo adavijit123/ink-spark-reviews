@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { generateReview } from "@/lib/review.functions";
 import { Button } from "@/components/ui/button";
-import googleReviewLogo from "@/assets/review-us-on-google.jpeg.asset.json";
+import googleReviewLogo from "@/assets/review-us-on-google.png";
 
 
 const FALLBACK_URL = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
@@ -137,17 +137,17 @@ function ReviewPage() {
 
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
+    <main className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-transparent px-5 pb-12 pt-10">
       <header className="text-center">
         <h1 className="text-[22px] font-semibold leading-tight tracking-wide uppercase">
           LOVE YOUR NEW INK?
         </h1>
         <img
-          src={googleReviewLogo.url}
+          src={googleReviewLogo}
           alt="Review us on Google"
-          className="mx-auto mt-3 w-56 max-w-full"
+          className="mx-auto mt-3 w-64 max-w-full"
         />
-        <div className="mt-4 flex justify-center gap-2">
+        <div className="mt-2 flex justify-center gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star key={i} className="size-8 fill-[#fbbc04] text-[#fbbc04]" />
           ))}
