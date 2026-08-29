@@ -128,11 +128,20 @@ function ReviewPage() {
   }
 
   async function copyAndOpen() {
-    const ok = await copyText(true);
-    setCopied(ok);
-    setTimeout(() => {
-      window.location.href = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
-    }, ok ? 2500 : 300);
+    if (copied) return;
+
+    const googleReviewUrl = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
+    const redirect = window.setTimeout(() => {
+      window.location.assign(googleReviewUrl);
+    }, 2500);
+
+    try {
+      await copyText(true);
+    } finally {
+      setCopied(true);
+    }
+
+    return () => window.clearTimeout(redirect);
   }
 
 
