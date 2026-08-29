@@ -123,6 +123,28 @@ export const generateReview = createServerFn({ method: "POST" })
           ? false
           : Math.random() * 100 < artistPercent);
 
+    // Selected artist's own profile: style, consultation, detail, professionalism, aftercare.
+    // Only 1–2 traits are used per review so it never reads like a checklist.
+    const artistProfile = (artistsRes.data ?? []).find(
+      (a) => a.name.trim().toLowerCase() === (data.artist ?? "").trim().toLowerCase(),
+    );
+    const artistTraits = artistProfile
+      ? pickSome(
+          [
+            artistProfile.tattoo_style && `Tattoo style: ${artistProfile.tattoo_style}`,
+            artistProfile.consultation && `Consultation: ${artistProfile.consultation}`,
+            artistProfile.attention_to_detail &&
+              `Attention to detail: ${artistProfile.attention_to_detail}`,
+            artistProfile.professionalism && `Professionalism: ${artistProfile.professionalism}`,
+            artistProfile.aftercare_guidance &&
+              `Aftercare guidance: ${artistProfile.aftercare_guidance}`,
+          ].filter((v): v is string => Boolean(v)),
+          2,
+        )
+      : [];
+
+
+
     // Language: Bangla share comes from the selected presets when configured,
     // otherwise the studio-wide default.
     const presetBanglaValues = presets
