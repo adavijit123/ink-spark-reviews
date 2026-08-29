@@ -255,13 +255,18 @@ function AdminDashboard() {
         </Button>
       </div>
 
-      <Tabs defaultValue="presets" className="mt-6">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="stats" className="mt-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="stats">Stats</TabsTrigger>
           <TabsTrigger value="presets">Presets</TabsTrigger>
           <TabsTrigger value="categories">Angles</TabsTrigger>
           <TabsTrigger value="keywords">Keywords</TabsTrigger>
           <TabsTrigger value="studio">Studio</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="stats" className="mt-4">
+          <StatsPanel />
+        </TabsContent>
 
         <TabsContent value="presets" className="mt-4">
           <PresetsPanel
@@ -752,6 +757,91 @@ function Field({
       ) : (
         <Input value={value} onChange={(e) => onChange(e.target.value)} className="mt-1.5" />
       )}
+    </div>
+  );
+}
+
+function StatsPanel() {
+  const eventsQuery = useQuery({
+    queryKey: ["review-events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("review_events")
+        .select("id, event_type, session_id, rating, email, language, artist, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const events = eventsQuery.data ?? [];
+  const scans = new Set(
+    events.filter((e) => e.event_type === "page_view").map((e) => e.session_id ?? e.id),
+  ).size;
+  const generated = events.filter((e) => e.event_type === "generate").length;
+  const opened = new Set(
+    events.filter((e) => e.event_type === "copy_open").map((e) => e.session_id ?? e.id),
+  ).size;
+  const confirms = events.filter((e) => e.event_type === "confirm");
+  const rated = confirms.filter((e) => e.rating);
+  const avg = rated.length
+    ? (rated.reduce((sum, e) => sum + (e.rating ?? 0), 0) / rated.length).toFixed(1)
+    : "—";
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <StatCard label="QR scans / visits" value={scans} />
+        <StatCard label="Reviews generated" value={generated} />
+        <StatCard label="Opened Google" value={opened} />
+        <StatCard label="Avg. stars given" value={avg} />
+      </div>
+
+      <div className="panel p-4">
+        <p className="text-eyebrow">Confirmed reviews</p>
+        {confirms.length === 0 ? (
+          <p className="mt-2 text-sm text-muted-foreground">
+            No customer confirmations yet.
+          </p>
+        ) : (
+          <div className="mt-3 space-y-2">
+            {confirms.map((e) => (
+              <div
+                key={e.id}
+                className="flex items-center justify-between gap-3 rounded-xl border border-input px-3 py-2 text-sm"
+              >
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{e.email || "No email shared"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(e.created_at).toLocaleString()}
+                    {e.artist ? ` · ${e.artist}` : ""}
+                    {e.language ? ` · ${e.language.toUpperCase()}` : ""}
+                  </p>
+                </div>
+                <span className="shrink-0 font-medium">
+                  {e.rating ? `${e.rating}★` : "—"}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <p className="text-xs text-muted-foreground">
+        Google does not share reviewer email addresses or star ratings with third-party
+        apps, so ratings and emails here are what customers voluntarily share after
+        posting.
+      </p>
+    </div>
+  );
+}
+
+function StatCard({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="panel p-4">
+      <p className="text-eyebrow">{label}</p>
+      <p className="mt-1 text-3xl font-semibold">{value}</p>
     </div>
   );
 }

@@ -44,6 +44,45 @@ export type Database = {
         }
         Relationships: []
       }
+      review_events: {
+        Row: {
+          artist: string | null
+          created_at: string
+          email: string | null
+          event_type: string
+          id: string
+          language: string | null
+          rating: number | null
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          artist?: string | null
+          created_at?: string
+          email?: string | null
+          event_type: string
+          id?: string
+          language?: string | null
+          rating?: number | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          artist?: string | null
+          created_at?: string
+          email?: string | null
+          event_type?: string
+          id?: string
+          language?: string | null
+          rating?: number | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       review_keywords: {
         Row: {
           created_at: string

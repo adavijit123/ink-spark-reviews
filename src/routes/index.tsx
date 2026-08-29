@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Sparkles, Star, ExternalLink, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { generateReview } from "@/lib/review.functions";
+import { logEvent } from "@/lib/tracking";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -53,6 +54,17 @@ function ReviewPage() {
   const [artist, setArtist] = useState<string | null>(null);
   const [language, setLanguage] = useState<"en" | "bn">("en");
   const [lastKeywords, setLastKeywords] = useState<string[]>([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [rating, setRating] = useState<number | null>(null);
+  const [email, setEmail] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const tracked = useRef(false);
+
+  useEffect(() => {
+    if (tracked.current) return;
+    tracked.current = true;
+    void logEvent("page_view");
+  }, []);
 
 
   const { data } = useQuery({
@@ -105,6 +117,7 @@ function ReviewPage() {
         },
       });
       setReview(result.review);
+      void logEvent("generate", { language, artist });
       setLastKeywords(result.keywords ?? []);
       setEditing(false);
     } catch (error) {
@@ -129,6 +142,8 @@ function ReviewPage() {
   async function copyAndOpen() {
     // Copy first so the customer never lands on Google with an empty clipboard.
     await copyText(true);
+    void logEvent("copy_open", { language, artist });
+    setShowConfirm(true);
     window.open(reviewUrl, "_blank", "noopener,noreferrer");
   }
 
@@ -265,6 +280,63 @@ function ReviewPage() {
               Copy &amp; open Google Reviews
             </Button>
 
+
+            {showConfirm && !confirmed && (
+              <div className="rounded-xl border border-input bg-background p-4">
+                <p className="text-sm font-medium">Did you post it? Let the studio know</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Optional — helps InkPark keep track of reviews.
+                </p>
+                <div className="mt-3 flex justify-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      aria-label={`${n} star`}
+                      onClick={() => setRating(n)}
+                    >
+                      <Star
+                        className={
+                          rating && n <= rating
+                            ? "size-7 fill-[#fbbc04] text-[#fbbc04]"
+                            : "size-7 text-muted-foreground"
+                        }
+                      />
+                    </button>
+                  ))}
+                </div>
+                <input
+                  type="email"
+                  inputMode="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Your Gmail (optional)"
+                  className="mt-3 h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary"
+                />
+                <Button
+                  className="mt-3 h-11 w-full rounded-full bg-primary text-sm font-medium text-primary-foreground"
+                  onClick={async () => {
+                    await logEvent("confirm", {
+                      rating,
+                      email: email.trim() || null,
+                      language,
+                      artist,
+                    });
+                    setConfirmed(true);
+                    toast.success("Thank you!");
+                  }}
+                  disabled={!rating && !email.trim()}
+                >
+                  I posted my review
+                </Button>
+              </div>
+            )}
+
+            {confirmed && (
+              <p className="text-center text-sm font-medium text-primary">
+                Thanks — your review is logged. 🖤
+              </p>
+            )}
 
             <p className="pt-1 text-center text-xs text-muted-foreground">
               Nothing is posted automatically — you paste and submit it yourself.
