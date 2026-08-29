@@ -163,37 +163,8 @@ function ReviewPage() {
 
         {artistOptions.length > 0 && (
           <div className="mt-5">
-            <div className="flex items-baseline justify-between gap-3">
-              <p className="text-eyebrow">Who was your artist?</p>
-              <div className="flex flex-col items-end gap-1.5">
-                <span className="text-eyebrow">Language</span>
-                <div className="inline-flex items-center rounded-lg border border-input bg-background p-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setLanguage("en")}
-                    className={
-                      language === "en"
-                        ? "rounded-lg border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
-                        : "rounded-lg px-3 py-1.5 text-xs font-medium text-foreground"
-                    }
-                  >
-                    English
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLanguage("bn")}
-                    className={
-                      language === "bn"
-                        ? "rounded-lg border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
-                        : "rounded-lg px-3 py-1.5 text-xs font-medium text-foreground"
-                    }
-                  >
-                    বাংলা
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <p className="text-eyebrow">Who was your artist?</p>
+            <div className="mt-2 flex flex-wrap items-end gap-2">
               {artistOptions.map((a) => (
                 <ChipButton
                   key={a}
@@ -203,6 +174,33 @@ function ReviewPage() {
                   {a}
                 </ChipButton>
               ))}
+              <div className="ml-auto flex flex-col items-start gap-1">
+                <span className="text-eyebrow">Language</span>
+                <div className="inline-flex items-center rounded-lg border border-input bg-background p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setLanguage("en")}
+                    className={
+                      language === "en"
+                        ? "rounded-lg border border-primary bg-accent px-2.5 py-2 text-xs font-medium text-accent-foreground"
+                        : "rounded-lg px-2.5 py-2 text-xs font-medium text-foreground"
+                    }
+                  >
+                    English
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLanguage("bn")}
+                    className={
+                      language === "bn"
+                        ? "rounded-lg border border-primary bg-accent px-2.5 py-2 text-xs font-medium text-accent-foreground"
+                        : "rounded-lg px-2.5 py-2 text-xs font-medium text-foreground"
+                    }
+                  >
+                    বাংলা
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
