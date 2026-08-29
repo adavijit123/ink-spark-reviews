@@ -122,19 +122,17 @@ function ReviewPage() {
       if (!silent) toast.success("Review copied — now paste it on Google");
       return true;
     } catch {
-      toast.error("Copy failed. Select the text and copy manually.");
+      if (!silent) toast.error("Copy failed. Select the text and copy manually.");
       return false;
     }
   }
 
   async function copyAndOpen() {
     const ok = await copyText(true);
-    if (!ok) return;
-    setCopied(true);
+    setCopied(ok);
     setTimeout(() => {
-      window.open("https://g.page/r/Cf-vHSmJ-os4EB0/review", "_blank", "noopener,noreferrer");
-      setTimeout(() => setCopied(false), 250);
-    }, 2500);
+      window.location.href = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
+    }, ok ? 2500 : 300);
   }
 
 
