@@ -132,9 +132,9 @@ function ReviewPage() {
     if (!ok) return;
     setCopied(true);
     setTimeout(() => {
-      window.open(reviewUrl, "_blank", "noopener,noreferrer");
+      window.open("https://g.page/r/Cf-vHSmJ-os4EB0/review", "_blank", "noopener,noreferrer");
       setTimeout(() => setCopied(false), 250);
-    }, 2750);
+    }, 2500);
   }
 
 
