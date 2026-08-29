@@ -132,8 +132,7 @@ function ReviewPage() {
     if (!ok) return;
     setCopied(true);
     setTimeout(() => {
-      window.open("https://g.page/r/Cf-vHSmJ-os4EB0/review", "_blank", "noopener,noreferrer");
-      setTimeout(() => setCopied(false), 250);
+      window.location.href = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
     }, 2500);
   }
 
