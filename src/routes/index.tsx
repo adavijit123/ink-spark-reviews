@@ -179,29 +179,13 @@ function ReviewPage() {
             </div>
             <div className="flex flex-col items-start">
               <p className="text-eyebrow">Language</p>
-              <div className="mt-2 inline-flex items-center rounded-2xl border border-input bg-background p-1">
-                <button
-                  type="button"
-                  onClick={() => setLanguage("en")}
-                  className={
-                    language === "en"
-                      ? "rounded-xl border border-primary bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
-                      : "rounded-xl px-3 py-2 text-sm font-medium text-foreground"
-                  }
-                >
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <ChipButton active={language === "en"} onClick={() => setLanguage("en")}>
                   English
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLanguage("bn")}
-                  className={
-                    language === "bn"
-                      ? "rounded-xl border border-primary bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
-                      : "rounded-xl px-3 py-2 text-sm font-medium text-foreground"
-                  }
-                >
+                </ChipButton>
+                <ChipButton active={language === "bn"} onClick={() => setLanguage("bn")}>
                   বাংলা
-                </button>
+                </ChipButton>
               </div>
             </div>
           </div>
