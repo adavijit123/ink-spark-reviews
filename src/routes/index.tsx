@@ -112,15 +112,9 @@ function ReviewPage() {
   }
 
   async function copyAndOpen() {
-    // Open the tab synchronously first — after an await the user gesture is
-    // lost and popup blockers silently kill window.open.
-    const win = window.open(reviewUrl, "_blank", "noopener,noreferrer");
+    // Copy first so the customer never lands on Google with an empty clipboard.
     await copyText(true);
-    if (!win) {
-      toast.info("Popup blocked — tap again or long-press to open the link.", {
-        action: { label: "Open", onClick: () => window.open(reviewUrl, "_blank") },
-      });
-    }
+    window.open(reviewUrl, "_blank", "noopener,noreferrer");
   }
 
 
