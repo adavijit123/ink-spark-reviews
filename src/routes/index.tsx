@@ -27,6 +27,18 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Generate, edit and copy your InkPark review in seconds.",
       },
+      { property: "og:type", content: "website" },
+      {
+        property: "og:image",
+        content:
+          "https://ink-spark-reviews.lovable.app/__l5e/assets-v1/d4e9d1a6-e1bb-4d5f-bacb-fcc61b864309/google-verified-reviews.jpeg",
+      },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:image",
+        content:
+          "https://ink-spark-reviews.lovable.app/__l5e/assets-v1/d4e9d1a6-e1bb-4d5f-bacb-fcc61b864309/google-verified-reviews.jpeg",
+      },
     ],
   }),
   component: ReviewPage,
