@@ -276,8 +276,8 @@ function ChipButton({
       onClick={onClick}
       className={
         active
-          ? "rounded-lg border border-primary bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground"
-          : "rounded-lg border border-input bg-background px-4 py-2.5 text-sm font-medium text-foreground"
+          ? "rounded-lg border border-primary bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
+          : "rounded-lg border border-input bg-background px-3 py-2 text-sm font-medium text-foreground"
       }
     >
       {children}
