@@ -128,12 +128,9 @@ function ReviewPage() {
   }
 
   async function copyAndOpen() {
-    console.log("copyAndOpen called");
     const ok = await copyText(true);
-    console.log("copyText returned", ok);
-    setCopied(true);
+    setCopied(ok);
     setTimeout(() => {
-      console.log("opening link");
       window.location.href = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
     }, ok ? 2500 : 300);
   }
