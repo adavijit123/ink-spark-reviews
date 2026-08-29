@@ -281,63 +281,6 @@ function ReviewPage() {
             </Button>
 
 
-            {showConfirm && !confirmed && (
-              <div className="rounded-xl border border-input bg-background p-4">
-                <p className="text-sm font-medium">Did you post it? Let the studio know</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Optional — helps InkPark keep track of reviews.
-                </p>
-                <div className="mt-3 flex justify-center gap-1.5">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      aria-label={`${n} star`}
-                      onClick={() => setRating(n)}
-                    >
-                      <Star
-                        className={
-                          rating && n <= rating
-                            ? "size-7 fill-[#fbbc04] text-[#fbbc04]"
-                            : "size-7 text-muted-foreground"
-                        }
-                      />
-                    </button>
-                  ))}
-                </div>
-                <input
-                  type="email"
-                  inputMode="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your Gmail (optional)"
-                  className="mt-3 h-11 w-full rounded-xl border border-input bg-background px-3 text-sm outline-none focus:border-primary"
-                />
-                <Button
-                  className="mt-3 h-11 w-full rounded-full bg-primary text-sm font-medium text-primary-foreground"
-                  onClick={async () => {
-                    await logEvent("confirm", {
-                      rating,
-                      email: email.trim() || null,
-                      language,
-                      artist,
-                    });
-                    setConfirmed(true);
-                    toast.success("Thank you!");
-                  }}
-                  disabled={!rating && !email.trim()}
-                >
-                  I posted my review
-                </Button>
-              </div>
-            )}
-
-            {confirmed && (
-              <p className="text-center text-sm font-medium text-primary">
-                Thanks — your review is logged. 🖤
-              </p>
-            )}
-
             <p className="pt-1 text-center text-xs text-muted-foreground">
               Nothing is posted automatically — you paste and submit it yourself.
             </p>
