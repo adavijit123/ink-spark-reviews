@@ -167,7 +167,7 @@ function ReviewPage() {
               <p className="text-eyebrow">Who was your artist?</p>
               <p className="text-eyebrow">Language</p>
             </div>
-            <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className="mt-2 flex flex-nowrap items-center gap-1.5">
               {artistOptions.map((a) => (
                 <ChipButton
                   key={a}
