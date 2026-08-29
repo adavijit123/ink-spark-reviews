@@ -162,44 +162,30 @@ function ReviewPage() {
         )}
 
         {artistOptions.length > 0 && (
-          <div className="mt-5">
-            <p className="text-eyebrow">Who was your artist?</p>
-            <div className="mt-2 flex flex-wrap items-end gap-2">
-              {artistOptions.map((a) => (
-                <ChipButton
-                  key={a}
-                  active={artist === a}
-                  onClick={() => setArtist((prev) => (prev === a ? null : a))}
-                >
-                  {a}
+          <div className="mt-5 grid grid-cols-[1fr_auto] items-end gap-4">
+            <div className="space-y-2">
+              <p className="text-eyebrow">Who was your artist?</p>
+              <div className="flex flex-wrap gap-2">
+                {artistOptions.map((a) => (
+                  <ChipButton
+                    key={a}
+                    active={artist === a}
+                    onClick={() => setArtist((prev) => (prev === a ? null : a))}
+                  >
+                    {a}
+                  </ChipButton>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <p className="text-eyebrow">Language</p>
+              <div className="flex flex-wrap gap-2">
+                <ChipButton active={language === "en"} onClick={() => setLanguage("en")}>
+                  English
                 </ChipButton>
-              ))}
-              <div className="ml-auto flex flex-col items-start gap-1">
-                <span className="text-eyebrow">Language</span>
-                <div className="inline-flex items-center rounded-lg border border-input bg-background p-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setLanguage("en")}
-                    className={
-                      language === "en"
-                        ? "rounded-lg border border-primary bg-accent px-2.5 py-2 text-xs font-medium text-accent-foreground"
-                        : "rounded-lg px-2.5 py-2 text-xs font-medium text-foreground"
-                    }
-                  >
-                    English
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLanguage("bn")}
-                    className={
-                      language === "bn"
-                        ? "rounded-lg border border-primary bg-accent px-2.5 py-2 text-xs font-medium text-accent-foreground"
-                        : "rounded-lg px-2.5 py-2 text-xs font-medium text-foreground"
-                    }
-                  >
-                    বাংলা
-                  </button>
-                </div>
+                <ChipButton active={language === "bn"} onClick={() => setLanguage("bn")}>
+                  বাংলা
+                </ChipButton>
               </div>
             </div>
           </div>
