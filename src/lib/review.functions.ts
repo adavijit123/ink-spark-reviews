@@ -50,7 +50,7 @@ export const generateReview = createServerFn({ method: "POST" })
 
     const supabase = publicClient();
 
-    const [settingsRes, categoriesRes, presetsRes, keywordsRes] = await Promise.all([
+    const [settingsRes, categoriesRes, presetsRes, keywordsRes, artistsRes] = await Promise.all([
       supabase.from("studio_settings").select("*").limit(1).maybeSingle(),
       supabase.from("review_categories").select("id, name, description").eq("is_active", true),
       supabase
@@ -61,7 +61,14 @@ export const generateReview = createServerFn({ method: "POST" })
         .from("review_keywords")
         .select("keyword, weight_percent")
         .eq("is_active", true),
+      supabase
+        .from("artist_profiles")
+        .select(
+          "name, tattoo_style, consultation, attention_to_detail, professionalism, aftercare_guidance",
+        )
+        .eq("is_active", true),
     ]);
+
 
     const settings = settingsRes.data;
     const categories = categoriesRes.data ?? [];
