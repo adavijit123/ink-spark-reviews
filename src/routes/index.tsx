@@ -119,7 +119,7 @@ function ReviewPage() {
     if (!review.trim()) return false;
     try {
       await navigator.clipboard.writeText(review);
-      toast.success(silent ? "Review copied — paste it on Google" : "Review copied — now paste it on Google");
+      toast.success(silent ? "Review copied ✓" : "Review copied — now paste it on Google");
       return true;
     } catch {
       toast.error("Copy failed. Select the text and copy manually.");
