@@ -163,20 +163,18 @@ function ReviewPage() {
 
         {artistOptions.length > 0 && (
           <div className="mt-5">
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-baseline justify-between gap-3">
               <p className="text-eyebrow">Who was your artist?</p>
               <div className="flex flex-col items-end gap-1.5">
-                <span className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                  Language
-                </span>
-                <div className="inline-flex items-center rounded-full border border-input bg-background p-0.5">
+                <span className="text-eyebrow">Language</span>
+                <div className="inline-flex items-center rounded-lg border border-input bg-background p-0.5">
                   <button
                     type="button"
                     onClick={() => setLanguage("en")}
                     className={
                       language === "en"
-                        ? "rounded-full border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
-                        : "rounded-full px-3 py-1.5 text-xs font-medium text-foreground"
+                        ? "rounded-lg border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
+                        : "rounded-lg px-3 py-1.5 text-xs font-medium text-foreground"
                     }
                   >
                     English
@@ -186,11 +184,11 @@ function ReviewPage() {
                     onClick={() => setLanguage("bn")}
                     className={
                       language === "bn"
-                        ? "rounded-full border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
-                        : "rounded-full px-3 py-1.5 text-xs font-medium text-foreground"
+                        ? "rounded-lg border border-primary bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground"
+                        : "rounded-lg px-3 py-1.5 text-xs font-medium text-foreground"
                     }
                   >
-                    Bangla
+                    বাংলা
                   </button>
                 </div>
               </div>
