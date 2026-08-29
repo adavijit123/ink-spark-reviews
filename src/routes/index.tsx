@@ -139,11 +139,13 @@ function ReviewPage() {
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5 pb-12 pt-10">
       <header className="text-center">
         <h1 className="text-[22px] font-semibold leading-tight tracking-wide uppercase">
-          INKPARK TATTOO STUDIO
+          LOVE YOUR NEW INK?
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Custom Tattoos. Clean Lines. Zero Rush.
-        </p>
+        <img
+          src={googleReviewLogo.url}
+          alt="Review us on Google"
+          className="mx-auto mt-3 w-56 max-w-full"
+        />
         <div className="mt-4 flex justify-center gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star key={i} className="size-8 fill-[#fbbc04] text-[#fbbc04]" />
