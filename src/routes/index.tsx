@@ -122,18 +122,17 @@ function ReviewPage() {
       if (!silent) toast.success("Review copied — now paste it on Google");
       return true;
     } catch {
-      toast.error("Copy failed. Select the text and copy manually.");
+      if (!silent) toast.error("Copy failed. Select the text and copy manually.");
       return false;
     }
   }
 
   async function copyAndOpen() {
     const ok = await copyText(true);
-    if (!ok) return;
     setCopied(true);
     setTimeout(() => {
       window.location.href = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
-    }, 2500);
+    }, ok ? 2500 : 300);
   }
 
 
