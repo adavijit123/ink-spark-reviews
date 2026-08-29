@@ -154,8 +154,7 @@ function ReviewPage() {
       <section className="panel mt-8 p-5">
         <h2 className="text-lg font-medium">Leave us a review</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Tap generate, tweak the words if you like, <span className="font-semibold">Copy</span> and <span className="font-semibold">Post</span> it on Google. Takes about
-          ten seconds.
+          Generate → Copy → Post on Google. (Takes 10 seconds.)
         </p>
 
         {(data?.categories.length ?? 0) > 0 && (
