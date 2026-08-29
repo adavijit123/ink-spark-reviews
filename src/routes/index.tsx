@@ -54,17 +54,7 @@ function ReviewPage() {
   const [artist, setArtist] = useState<string | null>(null);
   const [language, setLanguage] = useState<"en" | "bn">("en");
   const [lastKeywords, setLastKeywords] = useState<string[]>([]);
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [rating, setRating] = useState<number | null>(null);
-  const [email, setEmail] = useState("");
-  const [confirmed, setConfirmed] = useState(false);
-  const tracked = useRef(false);
 
-  useEffect(() => {
-    if (tracked.current) return;
-    tracked.current = true;
-    void logEvent("page_view");
-  }, []);
 
 
   const { data } = useQuery({
