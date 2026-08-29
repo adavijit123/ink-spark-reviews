@@ -10,7 +10,8 @@ import { generateReview } from "@/lib/review.functions";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 
-const FALLBACK_URL = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
+const FALLBACK_URL =
+  "https://search.google.com/local/writereview?placeid=ChIJrfSzdDPBVTcR_68dKYn6izg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
