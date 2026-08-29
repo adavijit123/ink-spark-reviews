@@ -163,8 +163,11 @@ function ReviewPage() {
 
         {artistOptions.length > 0 && (
           <div className="mt-5">
-            <p className="text-eyebrow">Who was your artist?</p>
-            <div className="mt-2 flex flex-wrap items-end gap-2">
+            <div className="flex items-center justify-between">
+              <p className="text-eyebrow">Who was your artist?</p>
+              <p className="text-eyebrow">Language</p>
+            </div>
+            <div className="mt-2 flex flex-nowrap items-center gap-1.5">
               {artistOptions.map((a) => (
                 <ChipButton
                   key={a}
@@ -174,32 +177,13 @@ function ReviewPage() {
                   {a}
                 </ChipButton>
               ))}
-              <div className="ml-auto flex flex-col items-start gap-1">
-                <span className="text-eyebrow">Language</span>
-                <div className="inline-flex items-center rounded-lg border border-input bg-background p-0.5">
-                  <button
-                    type="button"
-                    onClick={() => setLanguage("en")}
-                    className={
-                      language === "en"
-                        ? "rounded-lg border border-primary bg-accent px-2.5 py-2 text-xs font-medium text-accent-foreground"
-                        : "rounded-lg px-2.5 py-2 text-xs font-medium text-foreground"
-                    }
-                  >
-                    English
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLanguage("bn")}
-                    className={
-                      language === "bn"
-                        ? "rounded-lg border border-primary bg-accent px-2.5 py-2 text-xs font-medium text-accent-foreground"
-                        : "rounded-lg px-2.5 py-2 text-xs font-medium text-foreground"
-                    }
-                  >
-                    বাংলা
-                  </button>
-                </div>
+              <div className="ml-auto flex items-center gap-1.5">
+                <ChipButton active={language === "en"} onClick={() => setLanguage("en")}>
+                  English
+                </ChipButton>
+                <ChipButton active={language === "bn"} onClick={() => setLanguage("bn")}>
+                  বাংলা
+                </ChipButton>
               </div>
             </div>
           </div>
@@ -290,8 +274,8 @@ function ChipButton({
       onClick={onClick}
       className={
         active
-          ? "rounded-lg border border-primary bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground"
-          : "rounded-lg border border-input bg-background px-4 py-2.5 text-sm font-medium text-foreground"
+          ? "rounded-lg border border-primary bg-accent px-2.5 py-2 text-sm font-medium text-accent-foreground"
+          : "rounded-lg border border-input bg-background px-2.5 py-2 text-sm font-medium text-foreground"
       }
     >
       {children}
