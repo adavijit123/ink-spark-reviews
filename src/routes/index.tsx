@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { generateReview } from "@/lib/review.functions";
 import { Button } from "@/components/ui/button";
+import googleReviewLogo from "@/assets/review-us-on-google.jpeg.asset.json";
 
 
 const FALLBACK_URL = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
