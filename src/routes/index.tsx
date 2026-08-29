@@ -117,7 +117,6 @@ function ReviewPage() {
         },
       });
       setReview(result.review);
-      void logEvent("generate", { language, artist });
       setLastKeywords(result.keywords ?? []);
       setEditing(false);
     } catch (error) {
