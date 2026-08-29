@@ -131,8 +131,10 @@ function ReviewPage() {
     const ok = await copyText(true);
     if (!ok) return;
     setCopied(true);
-    window.open(reviewUrl, "_blank", "noopener,noreferrer");
-    setTimeout(() => setCopied(false), 3000);
+    setTimeout(() => {
+      window.open(reviewUrl, "_blank", "noopener,noreferrer");
+      setTimeout(() => setCopied(false), 250);
+    }, 2750);
   }
 
 
