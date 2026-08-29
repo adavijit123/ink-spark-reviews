@@ -50,7 +50,7 @@ export const generateReview = createServerFn({ method: "POST" })
 
     const supabase = publicClient();
 
-    const [settingsRes, categoriesRes, presetsRes, keywordsRes] = await Promise.all([
+    const [settingsRes, categoriesRes, presetsRes, keywordsRes, artistsRes] = await Promise.all([
       supabase.from("studio_settings").select("*").limit(1).maybeSingle(),
       supabase.from("review_categories").select("id, name, description").eq("is_active", true),
       supabase
@@ -61,7 +61,14 @@ export const generateReview = createServerFn({ method: "POST" })
         .from("review_keywords")
         .select("keyword, weight_percent")
         .eq("is_active", true),
+      supabase
+        .from("artist_profiles")
+        .select(
+          "name, tattoo_style, consultation, attention_to_detail, professionalism, aftercare_guidance",
+        )
+        .eq("is_active", true),
     ]);
+
 
     const settings = settingsRes.data;
     const categories = categoriesRes.data ?? [];
@@ -115,6 +122,28 @@ export const generateReview = createServerFn({ method: "POST" })
         : artistMode === "never"
           ? false
           : Math.random() * 100 < artistPercent);
+
+    // Selected artist's own profile: style, consultation, detail, professionalism, aftercare.
+    // Only 1–2 traits are used per review so it never reads like a checklist.
+    const artistProfile = (artistsRes.data ?? []).find(
+      (a) => a.name.trim().toLowerCase() === (data.artist ?? "").trim().toLowerCase(),
+    );
+    const artistTraits = artistProfile
+      ? pickSome(
+          [
+            artistProfile.tattoo_style && `Tattoo style: ${artistProfile.tattoo_style}`,
+            artistProfile.consultation && `Consultation: ${artistProfile.consultation}`,
+            artistProfile.attention_to_detail &&
+              `Attention to detail: ${artistProfile.attention_to_detail}`,
+            artistProfile.professionalism && `Professionalism: ${artistProfile.professionalism}`,
+            artistProfile.aftercare_guidance &&
+              `Aftercare guidance: ${artistProfile.aftercare_guidance}`,
+          ].filter((v): v is string => Boolean(v)),
+          2,
+        )
+      : [];
+
+
 
     // Language: Bangla share comes from the selected presets when configured,
     // otherwise the studio-wide default.
@@ -238,6 +267,12 @@ export const generateReview = createServerFn({ method: "POST" })
             ? `The customer's tattoo artist was ${data.artist}. Mention ${data.artist} by name as the artist who did the tattoo. Do not name any other artist.`
             : `The customer's tattoo artist was ${data.artist}, but do NOT mention any artist name in this review.`
           : "",
+        artistTraits.length
+          ? `True details about this artist — reflect these naturally in the customer's own words (do not list them):\n${artistTraits
+              .map((t) => `- ${t}`)
+              .join("\n")}`
+          : "",
+
         presets.length
           ? `Preset ideas for inspiration (rephrase, do not copy):\n${presets
               .map((p) => `- (${p.tone}) ${p.content}`)
