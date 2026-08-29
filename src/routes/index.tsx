@@ -131,7 +131,7 @@ function ReviewPage() {
     if (!ok) return;
     setCopied(true);
     window.open(reviewUrl, "_blank", "noopener,noreferrer");
-    setTimeout(() => setCopied(false), 1500);
+    setTimeout(() => setCopied(false), 3000);
   }
 
 
