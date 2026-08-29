@@ -145,17 +145,17 @@ function ReviewPage() {
         <img
           src={googleReviewLogo}
           alt="Review us on Google"
-          className="mx-auto mt-1 w-64 max-w-full"
+          className="mx-auto mt-0.5 w-64 max-w-full"
         />
-        <div className="mt-1 flex justify-center gap-2">
+        <div className="mt-0.5 flex justify-center gap-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <Star key={i} className="size-8 fill-[#fbbc04] text-[#fbbc04]" />
           ))}
         </div>
-        <p className="mt-1 text-[15px] text-muted-foreground">Exceptional</p>
+        <p className="mt-0.5 text-[15px] text-muted-foreground">Exceptional</p>
       </header>
 
-      <section className="panel mt-8 p-5">
+      <section className="panel mt-6 p-5">
         <h2 className="text-lg font-medium">Leave us a review</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Generate → Copy → Post on Google. (Takes 10 seconds.)
