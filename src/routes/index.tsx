@@ -39,6 +39,7 @@ function ReviewPage() {
   const [busy, setBusy] = useState(false);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [artist, setArtist] = useState<string | null>(null);
+  const [language, setLanguage] = useState<"en" | "bn">("en");
   const [lastKeywords, setLastKeywords] = useState<string[]>([]);
 
 
@@ -86,6 +87,7 @@ function ReviewPage() {
         data: {
           categoryIds,
           artist,
+          language,
           avoid: regenerate ? review : undefined,
           avoidKeywords: regenerate ? lastKeywords : undefined,
         },
@@ -176,7 +178,17 @@ function ReviewPage() {
           </div>
         )}
 
-
+        <div className="mt-5">
+          <p className="text-eyebrow">Review language</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <ChipButton
+              active={language === "en"}
+              onClick={() => setLanguage(language === "en" ? "bn" : "en")}
+            >
+              English
+            </ChipButton>
+          </div>
+        </div>
 
         {!review ? (
           <Button
