@@ -2,16 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { RefreshCw, Sparkles, Star, ExternalLink, Pencil } from "lucide-react";
+import { RefreshCw, Sparkles, Star, ExternalLink, Check } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { generateReview } from "@/lib/review.functions";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 
-const FALLBACK_URL =
-  "https://search.google.com/local/writereview?placeid=ChIJrfSzdDPBVTcR_68dKYn6izg";
+
+const FALLBACK_URL = "https://g.page/r/Cf-vHSmJ-os4EB0/review";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -47,12 +46,13 @@ export const Route = createFileRoute("/")({
 function ReviewPage() {
   const generate = useServerFn(generateReview);
   const [review, setReview] = useState("");
-  const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [artist, setArtist] = useState<string | null>(null);
   const [language, setLanguage] = useState<"en" | "bn">("en");
   const [lastKeywords, setLastKeywords] = useState<string[]>([]);
+  const [copied, setCopied] = useState(false);
+
 
 
 
@@ -107,7 +107,6 @@ function ReviewPage() {
       });
       setReview(result.review);
       setLastKeywords(result.keywords ?? []);
-      setEditing(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Something went wrong.");
     } finally {
@@ -119,7 +118,7 @@ function ReviewPage() {
     if (!review.trim()) return false;
     try {
       await navigator.clipboard.writeText(review);
-      toast.success(silent ? "Review copied ✓" : "Review copied — now paste it on Google");
+      if (!silent) toast.success("Review copied — now paste it on Google");
       return true;
     } catch {
       toast.error("Copy failed. Select the text and copy manually.");
@@ -128,9 +127,11 @@ function ReviewPage() {
   }
 
   async function copyAndOpen() {
-    // Copy first so the customer never lands on Google with an empty clipboard.
-    await copyText(true);
+    const ok = await copyText(true);
+    if (!ok) return;
+    setCopied(true);
     window.open(reviewUrl, "_blank", "noopener,noreferrer");
+    setTimeout(() => setCopied(false), 1500);
   }
 
 
@@ -222,53 +223,33 @@ function ReviewPage() {
           </Button>
         ) : (
           <div className="mt-6 space-y-3">
-            {editing ? (
-              <Textarea
-                value={review}
-                onChange={(e) => setReview(e.target.value)}
-                rows={6}
-                autoFocus
-                className="resize-none rounded-xl border-input bg-background text-base leading-relaxed"
-              />
-            ) : (
-              <div className="rounded-xl border border-input bg-background p-4 text-[15px] leading-relaxed">
-                {review}
-              </div>
-            )}
-
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                variant="outline"
-                className="h-12 rounded-full border-input font-medium text-secondary-foreground"
-                onClick={() => run(true)}
-                disabled={busy}
-              >
-                <RefreshCw className={busy ? "size-4 animate-spin" : "size-4"} />
-                Regenerate
-              </Button>
-              <Button
-                variant="outline"
-                className="h-12 rounded-full border-input font-medium text-secondary-foreground"
-                onClick={() => setEditing((v) => !v)}
-              >
-                <Pencil className="size-4" />
-                {editing ? "Done" : "Edit"}
-              </Button>
+            <div className="rounded-xl border border-input bg-background p-4 text-[15px] leading-relaxed">
+              {review}
             </div>
 
             <Button
               className="h-14 w-full rounded-full bg-primary text-base font-medium text-primary-foreground"
               onClick={copyAndOpen}
-              disabled={!review.trim()}
+              disabled={!review.trim() || copied}
             >
-              <ExternalLink className="size-5" />
-              Copy &amp; open Google Reviews
+              {copied ? (
+                <>
+                  <Check className="size-5" />
+                  Copied ✓
+                </>
+              ) : (
+                <>
+                  <ExternalLink className="size-5" />
+                  Copy &amp; Open Google
+                </>
+              )}
             </Button>
 
-
-            <p className="pt-1 text-center text-xs text-muted-foreground">
-              Nothing is posted automatically — you paste and submit it yourself.
-            </p>
+            {copied && (
+              <p className="animate-in fade-in text-center text-sm text-muted-foreground">
+                Review copied — paste it on Google.
+              </p>
+            )}
           </div>
         )}
       </section>
