@@ -143,7 +143,7 @@ function ReviewPage() {
           LOVE YOUR NEW INK?
         </h1>
         <img
-          src={googleReviewLogo.url}
+          src={googleReviewLogo}
           alt="Review us on Google"
           className="mx-auto mt-3 w-64 max-w-full"
         />
